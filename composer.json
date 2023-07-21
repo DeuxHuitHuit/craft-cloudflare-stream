@@ -1,0 +1,36 @@
+{
+  "name": "deuxhuithuit/craft-cloudflare-stream",
+  "description": "...",
+  "type": "craft-plugin",
+  "keywords": [
+    "cloudflare",
+    "stream",
+    "video",
+    "craft-cms"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Deux Huit Huit",
+      "homepage": "https://deuxhuithuit.com"
+    }
+  ],
+  "support": {
+    "email": "open-source@deuxhuithuit.com",
+    "issues": "https://github.com/developer/repo/issues?state=open",
+    "source": "https://github.com/developer/repo",
+    "docs": "https://github.com/developer/repo/blob/master/README.md"
+  },
+  "require": {
+    "craftcms/cms": "^4.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "deuxhuithuit\\cfstream\\": "src/"
+    }
+  },
+  "extra": {
+    "name": "Cloudflare Stream",
+    "handle": "cloudflare-stream"
+  }
+}

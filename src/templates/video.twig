@@ -1,0 +1,9 @@
+<div>
+	<h2>{{ value.meta.name }}</h2>
+	<p><strong>MP4:</strong> {{value.mp4Url|default('')}}</p>
+	<p><strong>HLS:</strong> {{value.playback.hls}}</p>
+	<p><strong>DASH:</strong> {{value.playback.hls}}</p>
+	<button type="button" class="btn submit cfstream-action" data-video-uid={{ value.uid }} data-field-handle={{ name }} data-element-id={{ element.id }} data-action-url="{{ actionUrl }}">
+		Delete from Cloudflare
+	</button>
+</div>
