@@ -27,7 +27,7 @@ class UploadVideoJob extends BaseJob
             return;
         }
 
-        $client = new CloudflareVideoStreamClient();
+        $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->settings);
         $result = $client->uploadVideo($this->videoUrl, $this->videoName);
 
         if (!$result) {

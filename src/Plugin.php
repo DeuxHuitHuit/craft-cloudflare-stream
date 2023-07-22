@@ -12,6 +12,8 @@ use craft\events\RegisterTemplateRootsEvent;
 
 class Plugin extends \craft\base\Plugin
 {
+    public bool $hasCpSettings = true;
+
     /**
     * @inheritdoc
     */
@@ -46,11 +48,16 @@ class Plugin extends \craft\base\Plugin
         parent::init();
     }
 
-    public static function getConfig()
+    protected function createSettingsModel(): ?\craft\base\Model
     {
-        $config = require Craft::$app->getPath()->getConfigPath()
-            . DIRECTORY_SEPARATOR . 'cfstream'
-            . DIRECTORY_SEPARATOR . 'config.php';
-        return $config;
+        return new \deuxhuithuit\cfstream\models\Settings;
+    }
+
+    protected function settingsHtml(): ?string
+    {
+        return \Craft::$app->getView()->renderTemplate(
+            'cloudflare-stream/settings',
+            ['settings' => $this->getSettings()]
+        );
     }
 }

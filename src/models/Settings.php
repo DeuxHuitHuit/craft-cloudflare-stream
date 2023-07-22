@@ -6,14 +6,13 @@ use craft\base\Model;
 
 class Settings extends Model
 {
-    public $foo = 'defaultFooValue';
-    public $bar = 'defaultBarValue';
+    public $accountId = '';
+    public $apiToken = '';
 
     public function defineRules(): array
     {
         return [
-            [['foo', 'bar'], 'required'],
-            // ...
+            [['accountId', 'apiToken'], 'required'],
         ];
     }
 }

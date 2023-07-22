@@ -23,7 +23,7 @@ class PollVideoJob extends BaseJob
 
         // Check if the field is a CloudflareVideoStreamField
         if ($field instanceof CloudflareVideoStreamField) {
-            $client = new CloudflareVideoStreamClient();
+            $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->settings);
             $result = $client->getVideo($this->videoUid);
             $ready = $result ? $result['readyToStream'] : false;
             if ($ready) {

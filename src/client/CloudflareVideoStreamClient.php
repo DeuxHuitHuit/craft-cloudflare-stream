@@ -11,12 +11,10 @@ class CloudflareVideoStreamClient
     public $accountId;
     public $apiToken;
 
-    public function __construct()
+    public function __construct(\deuxhuithuit\cfstream\models\Settings $config)
     {
-        $config = CloudflareVideoStreamModule::getConfig();
-
-        $this->accountId = $config['accountId'];
-        $this->apiToken = $config['apiToken'];
+        $this->accountId = $config->accountId;
+        $this->apiToken = $config->apiToken;
     }
 
     public function uploadVideo(string $videoUrl, string $videoName)

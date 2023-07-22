@@ -26,7 +26,7 @@ class DeleteVideoJob extends BaseJob
             return;
         }
 
-        $client = new CloudflareVideoStreamClient();
+        $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->settings);
         $client->deleteVideo($this->videoUid);
         $element->setFieldValue($this->fieldHandle, null);
         Craft::$app->getElements()->saveElement($element);
