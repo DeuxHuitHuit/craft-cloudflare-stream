@@ -12,13 +12,15 @@
 	</video>
 </div>
 <details style="margin: 1em 0;">
-	<summary>{{ value.meta.name }}</h2></summary>
-	<div>
+	<summary>{{ value.meta.name }} <small>({{ value.input.width }} x {{ value.input.height }}, {{ value.duration }}s)</small></summary>
+	<div style="margin: 1em 0;">
 		<p><strong>MP4:</strong> {{value.mp4Url|default('')}}</p>
 		<p><strong>HLS:</strong> {{value.playback.hls}}</p>
 		<p><strong>DASH:</strong> {{value.playback.hls}}</p>
 		<p><strong>Poster:</strong> {{value.thumbnail }}</p>
-		<p><strong>UID:</strong> {{value.uid}}</p>
+		<div style="margin: 1em 0;">
+			<textarea readonly style="width:100%" rows="6">{{ value|json_encode(constant('JSON_PRETTY_PRINT')) }}</textarea>
+		</div>
 		<button type="button" class="btn submit cfstream-action" data-video-uid={{ value.uid }} data-field-handle={{ name }} data-element-id={{ element.id }} data-action-url="{{ actionUrl }}">
 			Delete from Cloudflare
 		</button>

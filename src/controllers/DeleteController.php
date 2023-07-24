@@ -30,6 +30,7 @@ class DeleteController extends Controller
         Craft::$app->getQueue()->push($deleteJob);
         $element->setFieldValue($fieldHandle, null);
         Craft::$app->getElements()->saveElement($element, true, true, false);
+        Craft::$app->getSession()->setNotice(Craft::t('cloudflare-stream', 'Video removed from Cloudflare Stream successfully'));
         return $this->asJson(['success' => true]);
     }
 }
