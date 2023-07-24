@@ -2,10 +2,9 @@
 
 namespace deuxhuithuit\cfstream\jobs;
 
-use Craft;
 use craft\queue\BaseJob;
-use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
+use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 
 class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
 {
@@ -21,19 +20,19 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
 
     public function canRetry($attempt, $error)
     {
-        return ($attempt < 5);
+        return $attempt < 5;
     }
 
     public function execute($queue): void
     {
         // Get the entry or element where the field is located
-        $element = Craft::$app->getElements()->getElementById($this->elementId);
+        $element = \Craft::$app->getElements()->getElementById($this->elementId);
         if (!$element) {
             throw new \Exception('Element not found.');
         }
 
         // Get the CloudflareVideoStreamField by its handle
-        $field = Craft::$app->getFields()->getFieldByHandle($this->fieldHandle);
+        $field = \Craft::$app->getFields()->getFieldByHandle($this->fieldHandle);
         if (!$field) {
             throw new \Exception('Field not found.');
         }
@@ -43,6 +42,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         // Check if the field is a CloudflareVideoStreamField
         if (!$field instanceof CloudflareVideoStreamField) {
             $this->setProgress($queue, 0.1, 'ERROR: Field is not a Cloudflare Video Stream field');
+
             throw new \Exception('Field is not a Cloudflare Video Stream field');
         }
 
@@ -55,28 +55,31 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
 
         if (!$result) {
             $this->setProgress($queue, 0.3, 'ERROR: Upload request failed');
+
             throw new \Exception('Upload request failed');
-        } else if (!empty($result['error'])) {
+        }
+        if (!empty($result['error'])) {
             $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error'] . ' ' . $result['message']);
+
             throw new \Exception($result['error'] . ' ' . $result['message']);
         }
 
         $this->setProgress($queue, 0.4, 'Saving craft element');
         $element->setFieldValue($this->fieldHandle, $result);
-        Craft::$app->getElements()->saveElement($element, true, true, false);
+        \Craft::$app->getElements()->saveElement($element, true, true, false);
         $this->setProgress($queue, 0.5, 'Craft element saved');
 
         $this->setProgress($queue, 0.6, 'Pushing polling job');
         $pollingJob = new PollVideoJob([
             'elementId' => $this->elementId,
             'fieldHandle' => $this->fieldHandle,
-            'videoUid' => $result['uid']
+            'videoUid' => $result['uid'],
         ]);
-        Craft::$app->getQueue()->push($pollingJob);
+        \Craft::$app->getQueue()->push($pollingJob);
         $this->setProgress($queue, 0.7, 'Polling job pushed');
 
         // Log the success
-        Craft::info('Video uploaded to Cloudflare Stream.', __METHOD__);
+        \Craft::info('Video uploaded to Cloudflare Stream.', __METHOD__);
         $this->setProgress($queue, 1, 'Upload successful');
     }
 

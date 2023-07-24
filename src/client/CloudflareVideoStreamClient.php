@@ -22,22 +22,22 @@ class CloudflareVideoStreamClient
         $url = $this->baseUrl . $accountId . '/stream/copy';
         $uploadRes = $client->request('POST', $url, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $apiToken
+                'Authorization' => 'Bearer ' . $apiToken,
             ],
-            'body' => json_encode(['url' => $videoUrl, 'meta' => ['name' => $videoName ]]),
+            'body' => json_encode(['url' => $videoUrl, 'meta' => ['name' => $videoName]]),
             'http_errors' => false,
         ]);
 
         if ($uploadRes->getStatusCode() !== 200) {
             return [
                 'error' => 'Error uploading video',
-                'message' => $uploadRes->getBody()
+                'message' => $uploadRes->getBody(),
             ];
         }
 
         $data = json_decode($uploadRes->getBody(), true);
-        $result = $data['result'];
-        return $result;
+
+        return $data['result'];
     }
 
     public function getVideo(string $videoUid)
@@ -48,11 +48,12 @@ class CloudflareVideoStreamClient
         $url = $this->baseUrl . $accountId . '/stream/' . $videoUid;
         $res = $client->request('GET', $url, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $apiToken
+                'Authorization' => 'Bearer ' . $apiToken,
             ],
-            'http_errors' => false
+            'http_errors' => false,
         ]);
         $data = json_decode($res->getBody(), true);
+
         return $data['result'];
     }
 
@@ -64,11 +65,12 @@ class CloudflareVideoStreamClient
         $url = $this->baseUrl . $accountId . '/stream/' . $videoUid . '/downloads';
         $res = $client->request('POST', $url, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $apiToken
+                'Authorization' => 'Bearer ' . $apiToken,
             ],
             'http_errors' => false,
         ]);
         $data = json_decode($res->getBody(), true);
+
         return $data['result']['default']['url'];
     }
 
@@ -80,9 +82,9 @@ class CloudflareVideoStreamClient
         $url = $this->baseUrl . $accountId . '/stream/' . $videoUid;
         $client->request('DELETE', $url, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $apiToken
+                'Authorization' => 'Bearer ' . $apiToken,
             ],
-            'http_errors' => false
+            'http_errors' => false,
         ]);
     }
 }

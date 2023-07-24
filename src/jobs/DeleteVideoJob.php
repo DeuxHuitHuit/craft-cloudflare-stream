@@ -2,10 +2,9 @@
 
 namespace deuxhuithuit\cfstream\jobs;
 
-use Craft;
 use craft\queue\BaseJob;
-use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
+use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 
 class DeleteVideoJob extends BaseJob
 {
@@ -16,13 +15,13 @@ class DeleteVideoJob extends BaseJob
     public function execute($queue): void
     {
         // Get the entry or element where the field is located
-        $element = Craft::$app->getElements()->getElementById($this->elementId);
+        $element = \Craft::$app->getElements()->getElementById($this->elementId);
         if (!$element) {
             throw new \Exception('Element not found.');
         }
 
         // Get the CloudflareVideoStreamField by its handle
-        $field = Craft::$app->getFields()->getFieldByHandle($this->fieldHandle);
+        $field = \Craft::$app->getFields()->getFieldByHandle($this->fieldHandle);
         if (!$field) {
             throw new \Exception('Field not found.');
         }
@@ -32,6 +31,7 @@ class DeleteVideoJob extends BaseJob
         // Check if the field is a CloudflareVideoStreamField
         if (!$field instanceof CloudflareVideoStreamField) {
             $this->setProgress($queue, 0.1, 'ERROR: Field is not a Cloudflare Video Stream field');
+
             throw new \Exception('Field is not a Cloudflare Video Stream field');
         }
 
@@ -44,7 +44,7 @@ class DeleteVideoJob extends BaseJob
 
         $this->setProgress($queue, 0.4, 'Updating field value');
         $element->setFieldValue($this->fieldHandle, null);
-        Craft::$app->getElements()->saveElement($element, true, true, false);
+        \Craft::$app->getElements()->saveElement($element, true, true, false);
 
         $this->setProgress($queue, 1, 'Done');
     }

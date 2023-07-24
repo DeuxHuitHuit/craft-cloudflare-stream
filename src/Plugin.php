@@ -2,25 +2,21 @@
 
 namespace deuxhuithuit\cfstream;
 
-use Craft;
-use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
+use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterTemplateRootsEvent;
 use craft\services\Fields;
 use craft\web\View;
-use craft\events\RegisterComponentTypesEvent;
+use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 use yii\base\Event;
-use craft\events\RegisterTemplateRootsEvent;
 
 class Plugin extends \craft\base\Plugin
 {
     public bool $hasCpSettings = true;
 
-    /**
-    * @inheritdoc
-    */
     public function __construct($id, $parent = null, array $config = [])
     {
-        Craft::setAlias('@plugin/cloudflare-stream', $this->getBasePath());
-        Craft::setAlias('@plugin/cloudflare-stream/resources', $this->getBasePath() . DIRECTORY_SEPARATOR . 'resources');
+        \Craft::setAlias('@plugin/cloudflare-stream', $this->getBasePath());
+        \Craft::setAlias('@plugin/cloudflare-stream/resources', $this->getBasePath() . DIRECTORY_SEPARATOR . 'resources');
         $this->controllerNamespace = 'deuxhuithuit\cfstream\controllers';
 
         // Base template directory
@@ -51,7 +47,7 @@ class Plugin extends \craft\base\Plugin
 
     protected function createSettingsModel(): ?\craft\base\Model
     {
-        return new \deuxhuithuit\cfstream\models\Settings;
+        return new \deuxhuithuit\cfstream\models\Settings();
     }
 
     protected function settingsHtml(): ?string

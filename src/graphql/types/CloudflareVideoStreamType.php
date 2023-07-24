@@ -3,7 +3,6 @@
 namespace deuxhuithuit\cfstream\graphql\types;
 
 use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 
 class CloudflareVideoStreamType extends ObjectType
@@ -21,7 +20,7 @@ class CloudflareVideoStreamType extends ObjectType
                     'description' => 'A Cloudflare-generated unique identifier for a media item.',
                     'resolve' => function ($value) {
                         return strval($value['uid']);
-                    }
+                    },
                 ],
                 'name' => [
                     'name' => 'name',
@@ -80,9 +79,9 @@ class CloudflareVideoStreamType extends ObjectType
                                 'resolve' => function ($value) {
                                     return $value['width'];
                                 },
-                            ]
-                        ]
-                    ])
+                            ],
+                        ],
+                    ]),
                 ],
                 'preview' => [
                     'name' => 'preview',
@@ -133,7 +132,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
                                     return strval($value['created']);
-                                }
+                                },
                             ],
                             'downloadedFrom' => [
                                 'name' => 'downloadedFrom',
@@ -142,7 +141,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
                                     return strval($value['downloadedFrom']);
-                                }
+                                },
                             ],
                             'height' => [
                                 'name' => 'height',
@@ -150,7 +149,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
                                     return $value['height'];
-                                }
+                                },
                             ],
                             'name' => [
                                 'name' => 'name',
@@ -158,7 +157,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
                                     return strval($value['name']);
-                                }
+                                },
                             ],
                             'opacity' => [
                                 'name' => 'opacity',
@@ -169,7 +168,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
                                     return $value['opacity'];
-                                }
+                                },
                             ],
                             'padding' => [
                                 'name' => 'padding',
@@ -180,7 +179,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
                                     return $value['padding'];
-                                }
+                                },
                             ],
                             'position' => [
                                 'name' => 'position',
@@ -190,7 +189,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
                                     return strval($value['position']);
-                                }
+                                },
                             ],
                             'scale' => [
                                 'name' => 'scale',
@@ -201,7 +200,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
                                     return $value['scale'];
-                                }
+                                },
                             ],
                             'size' => [
                                 'name' => 'size',
@@ -209,7 +208,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
                                     return $value['size'];
-                                }
+                                },
                             ],
                             'width' => [
                                 'name' => 'width',
@@ -217,7 +216,7 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
                                     return $value['width'];
-                                }
+                                },
                             ],
                             'uid' => [
                                 'name' => 'uid',
@@ -225,12 +224,12 @@ class CloudflareVideoStreamType extends ObjectType
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
                                     return strval($value['uid']);
-                                }
-                            ]
-                        ]
-                    ])
-                ]
-            ]
+                                },
+                            ],
+                        ],
+                    ]),
+                ],
+            ],
         ]);
     }
 }
