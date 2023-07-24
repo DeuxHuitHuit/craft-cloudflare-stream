@@ -9,7 +9,7 @@
     "video",
     "craft-cms"
   ],
-  "license": "MIT",
+  "license": "Craft",
   "authors": [
     {
       "name": "Deux Huit Huit",
@@ -41,5 +41,8 @@
       "yiisoft/yii2-composer": true,
       "craftcms/plugin-installer": true
     }
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.22"
   }
 }
