@@ -12,6 +12,7 @@ class PollVideoJob extends BaseJob
     public $elementId;
     public $fieldHandle;
     public $videoUid;
+    public $lastResult;
 
     public function execute($queue): void
     {
@@ -58,6 +59,7 @@ class PollVideoJob extends BaseJob
         } else {
             $this->setProgress($queue, 0, 'Delayed retry');
             // Retry the job after 10 seconds
+            $this->lastResult = $result;
             $queue->delay(10)->push($this);
         }
     }
