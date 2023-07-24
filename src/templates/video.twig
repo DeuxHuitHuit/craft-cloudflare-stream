@@ -1,9 +1,26 @@
 <div>
-	<h2>{{ value.meta.name }}</h2>
-	<p><strong>MP4:</strong> {{value.mp4Url|default('')}}</p>
-	<p><strong>HLS:</strong> {{value.playback.hls}}</p>
-	<p><strong>DASH:</strong> {{value.playback.hls}}</p>
-	<button type="button" class="btn submit cfstream-action" data-video-uid={{ value.uid }} data-field-handle={{ name }} data-element-id={{ element.id }} data-action-url="{{ actionUrl }}">
-		Delete from Cloudflare
-	</button>
+	<video controls style="width: 100%" poster="{{ value.thumbnail }}">
+		{% if value.mp4Url %}
+			<source src="{{ value.mp4Url }}" type="video/mp4">
+		{% endif %}
+		{% if value.playback.hls %}
+			<source src="{{ value.playback.hls }}" type="application/x-mpegURL">
+		{% endif %}
+		{% if value.playback.dash %}
+			<source src="{{ value.playback.dash }}" type="application/dash+xml">
+		{% endif %}
+	</video>
 </div>
+<details style="margin: 1em 0;">
+	<summary>{{ value.meta.name }}</h2></summary>
+	<div>
+		<p><strong>MP4:</strong> {{value.mp4Url|default('')}}</p>
+		<p><strong>HLS:</strong> {{value.playback.hls}}</p>
+		<p><strong>DASH:</strong> {{value.playback.hls}}</p>
+		<p><strong>Poster:</strong> {{value.thumbnail }}</p>
+		<p><strong>UID:</strong> {{value.uid}}</p>
+		<button type="button" class="btn submit cfstream-action" data-video-uid={{ value.uid }} data-field-handle={{ name }} data-element-id={{ element.id }} data-action-url="{{ actionUrl }}">
+			Delete from Cloudflare
+		</button>
+	</div>
+</details>

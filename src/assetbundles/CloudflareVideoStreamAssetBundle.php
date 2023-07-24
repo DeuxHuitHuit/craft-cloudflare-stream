@@ -9,7 +9,7 @@ class CloudflareVideoStreamAssetBundle extends AssetBundle
 {
     public function init()
     {
-        $this->sourcePath = '@plugin/cfstream/resources';
+        $this->sourcePath = '@plugin/cloudflare-stream/resources';
 
         $this->depends = [
             CpAsset::class,

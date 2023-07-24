@@ -4,6 +4,7 @@ namespace deuxhuithuit\cfstream\fields;
 
 use deuxhuithuit\cfstream\assetbundles\CloudflareVideoStreamAssetBundle;
 use deuxhuithuit\cfstream\graphql\types\CloudflareVideoStreamType;
+use deuxhuithuit\cfstream\Plugin;
 use yii\db\Schema;
 use Craft;
 use craft\base\ElementInterface;
@@ -58,21 +59,49 @@ class CloudflareVideoStreamField extends Field
     public function getInputHtml($value, ElementInterface $element = null): string
     {
         Craft::$app->getView()->registerAssetBundle(CloudflareVideoStreamAssetBundle::class);
-        if (!$value) {
-            return Craft::$app->getView()->renderTemplate('cfstream/upload', [
+
+        $settings = Plugin::getInstance()->getSettings();
+
+        // Valiate settings
+        if (!$settings->accountId || !$settings->apiToken) {
+            return Craft::$app->getView()->renderTemplate('cloudflare-stream/missing-settings', [
                 'name' => $this->handle,
-                'actionUrl' => UrlHelper::actionUrl('cfstream/upload/upload'),
-                'element' => $element
+                'settingsUrl' => UrlHelper::cpUrl('settings/plugins/cloudflare-stream'),
+                'element' => $element,
             ]);
         }
-        if (!$value['readyToStream']) {
-            return Craft::$app->getView()->renderTemplate('cfstream/uploading', [
+
+        // Validate value in DB
+        if (!$value) {
+            return Craft::$app->getView()->renderTemplate('cloudflare-stream/upload', [
+                'name' => $this->handle,
+                'actionUrl' => UrlHelper::actionUrl('cloudflare-stream/upload/upload'),
+                'element' => $element,
+            ]);
+        }
+
+        // Not added to stream
+        if (!isset($value['meta'])) {
+            return Craft::$app->getView()->renderTemplate('cloudflare-stream/added', [
+                'name' => $this->handle,
                 'value' => $value,
+                'element' => $element,
             ]);
         }
-        return Craft::$app->getView()->renderTemplate('cfstream/video', [
+
+        // Not ready to stream (i.e. still processing...)
+        if (!$value['readyToStream']) {
+            return Craft::$app->getView()->renderTemplate('cloudflare-stream/uploading', [
+                'name' => $this->handle,
+                'value' => $value,
+                'element' => $element,
+            ]);
+        }
+
+        // Ready to stream
+        return Craft::$app->getView()->renderTemplate('cloudflare-stream/video', [
             'name' => $this->handle,
-            'actionUrl' => UrlHelper::actionUrl('cfstream/delete/delete'),
+            'actionUrl' => UrlHelper::actionUrl('cloudflare-stream/delete/delete'),
             'element' => $element,
             'value' => $value
         ]);

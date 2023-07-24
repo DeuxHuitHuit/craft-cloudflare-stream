@@ -2,6 +2,7 @@
   "name": "deuxhuithuit/craft-cloudflare-stream",
   "description": "Upload your videos assets to Cloudflare Stream from Craft CMS assets interface",
   "type": "craft-plugin",
+  "version": "0.0.1",
   "keywords": [
     "cloudflare",
     "stream",
@@ -17,11 +18,12 @@
   ],
   "support": {
     "email": "open-source@deuxhuithuit.com",
-    "issues": "https://github.com/developer/repo/issues?state=open",
-    "source": "https://github.com/developer/repo",
-    "docs": "https://github.com/developer/repo/blob/master/README.md"
+    "issues": "https://github.com/DeuxHuitHuit/craft-cloudflare-stream/issues?state=open",
+    "source": "https://github.com/DeuxHuitHuit/craft-cloudflare-stream",
+    "docs": "https://github.com/DeuxHuitHuit/craft-cloudflare-stream/blob/master/README.md"
   },
   "require": {
+    "php": "8.1.*|8.2.*",
     "craftcms/cms": "^4.4.0"
   },
   "autoload": {
@@ -33,5 +35,11 @@
     "name": "Cloudflare Stream",
     "handle": "cloudflare-stream",
     "hasCpSettings": true
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
   }
 }

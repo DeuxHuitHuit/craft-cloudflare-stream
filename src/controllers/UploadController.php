@@ -13,23 +13,43 @@ class UploadController extends Controller
 
     public function actionUpload()
     {
+        $this->requirePostRequest();
         $elementId = Craft::$app->getRequest()->getBodyParam('elementId');
-        $fieldHandle = Craft::$app->getRequest()->getBodyParam('fieldHandle');
-        $videoUrl = Craft::$app->getRequest()->getBodyParam('videoUrl');
-        $videoName = Craft::$app->getRequest()->getBodyParam('videoName');
-        $element = Craft::$app->getElements()->getElementById($elementId);
-        $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
-        if ($field instanceof CloudflareVideoStreamField) {
-            $uploadJob = new UploadVideoJob([
-                'fieldHandle' => $fieldHandle,
-                'elementId' => $elementId,
-                'videoUrl' => $videoUrl,
-                'videoName' => $videoName
-            ]);
-            Craft::$app->getQueue()->push($uploadJob);
-            $element->setFieldValue($this->fieldHandle, ['readyToStream' => false]);
-            Craft::$app->getElements()->saveElement($element);
+        if (!$elementId) {
+            return $this->asJson(['success' => false, 'message' => 'No element ID provided.']);
         }
+        $fieldHandle = Craft::$app->getRequest()->getBodyParam('fieldHandle');
+        if (!$fieldHandle) {
+            return $this->asJson(['success' => false, 'message' => 'No field handle provided.']);
+        }
+        $videoUrl = Craft::$app->getRequest()->getBodyParam('videoUrl');
+        if (!$videoUrl) {
+            return $this->asJson(['success' => false, 'message' => 'No video URL provided.']);
+        }
+        $videoName = Craft::$app->getRequest()->getBodyParam('videoName');
+        if (!$videoName) {
+            return $this->asJson(['success' => false, 'message' => 'No video name provided.']);
+        }
+        $element = Craft::$app->getElements()->getElementById($elementId);
+        if (!$element) {
+            return $this->asJson(['success' => false, 'message' => 'Element not found.']);
+        }
+        /**
+         * @var CloudflareVideoStreamField $field
+         */
+        $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+        if (!$field instanceof CloudflareVideoStreamField) {
+            return $this->asJson(['success' => false, 'message' => 'Field is not a Cloudflare Video Stream field.']);
+        }
+        $uploadJob = new UploadVideoJob([
+            'fieldHandle' => $fieldHandle,
+            'elementId' => $elementId,
+            'videoUrl' => $videoUrl,
+            'videoName' => $videoName
+        ]);
+        Craft::$app->getQueue()->push($uploadJob);
+        $element->setFieldValue($fieldHandle, ['readyToStream' => false]);
+        Craft::$app->getElements()->saveElement($element, true, true, false);
         return $this->asJson(['success' => true]);
     }
 }

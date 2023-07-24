@@ -19,7 +19,8 @@ class Plugin extends \craft\base\Plugin
     */
     public function __construct($id, $parent = null, array $config = [])
     {
-        Craft::setAlias('@plugin/cfstream', $this->getBasePath());
+        Craft::setAlias('@plugin/cloudflare-stream', $this->getBasePath());
+        Craft::setAlias('@plugin/cloudflare-stream/resources', $this->getBasePath() . DIRECTORY_SEPARATOR . 'resources');
         $this->controllerNamespace = 'deuxhuithuit\cfstream\controllers';
 
         // Base template directory
