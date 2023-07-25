@@ -1,5 +1,9 @@
 # Change log
 
+## 1.2.2 - 2023-07-25
+
+* 7550b37544 Add missing 1.2.1 change log entry
+
 ## 1.2.1 - 2023-07-25
 
 * 2d7423212d Fix changelog formatting
