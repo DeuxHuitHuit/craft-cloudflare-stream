@@ -1,5 +1,9 @@
 # Change log
 
+## 1.2.4 - 2023-07-25
+
+* 2e955cba59 New icon
+
 ## 1.2.3 - 2023-07-25
 
 * 4ad1155e26 Fix a bug with settings validation
