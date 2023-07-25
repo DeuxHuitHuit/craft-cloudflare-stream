@@ -40,10 +40,16 @@ class CloudflareVideoStreamField extends Field
     {
         \Craft::$app->getView()->registerAssetBundle(CloudflareVideoStreamAssetBundle::class);
 
+        // Make sure it's a video
+        if (!$element || $element->kind !== \craft\elements\Asset::KIND_VIDEO) {
+            return \Craft::$app->getView()->renderTemplate('cloudflare-stream/not-a-video');
+        }
+
+        /** @var \deuxhuithuit\cfstream\models\Settings */
         $settings = Plugin::getInstance()->getSettings();
 
-        // Valiate settings
-        if (!$settings->accountId || !$settings->apiToken) {
+        // Validate settings
+        if (!$settings->getAccountId() || !$settings->getApiToken()) {
             return \Craft::$app->getView()->renderTemplate('cloudflare-stream/missing-settings', [
                 'name' => $this->handle,
                 'settingsUrl' => UrlHelper::cpUrl('settings/plugins/cloudflare-stream'),
