@@ -18,3 +18,9 @@
   required: true,
   suggestEnvVars: true
 }) }}
+
+{{ forms.lightswitch({
+  label: 'Upload videos to Cloudflare Stream as soon as the asset is created'|t('cloudflare-stream'),
+  name: 'autoUpload',
+  on: settings.autoUpload,
+}) }}

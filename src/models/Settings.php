@@ -10,10 +10,16 @@ class Settings extends Model
     public $accountId = '';
     public $apiToken = '';
 
+    /**
+     * @var bool
+     */
+    public $autoUpload = false;
+
     public function defineRules(): array
     {
         return [
             [['accountId', 'apiToken'], 'required'],
+            ['autoUpload', 'bool'],
         ];
     }
 
@@ -25,5 +31,10 @@ class Settings extends Model
     public function getApiToken(): string
     {
         return App::parseEnv($this->apiToken);
+    }
+
+    public function isAutoUpload(): bool
+    {
+        return $this->autoUpload == 1 || $this->autoUpload == true;
     }
 }
