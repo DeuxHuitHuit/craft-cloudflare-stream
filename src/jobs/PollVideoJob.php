@@ -12,6 +12,7 @@ class PollVideoJob extends BaseJob
     public $fieldHandle;
     public $videoUid;
     public $lastResult;
+    public $attempts = 0;
 
     public function execute($queue): void
     {
@@ -44,6 +45,7 @@ class PollVideoJob extends BaseJob
 
         $this->setProgress($queue, 0.2, 'Sending poll request to Cloudflare Stream');
 
+        ++$this->attempts;
         $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->getSettings());
         $result = $client->getVideo($this->videoUid);
 
@@ -52,9 +54,7 @@ class PollVideoJob extends BaseJob
         $ready = $result ? $result['readyToStream'] : false;
         if ($ready) {
             $this->setProgress($queue, 0.4, 'Sending download url request to Cloudflare Stream');
-
             $mp4Url = $client->getDownloadUrl($this->videoUid);
-
             $this->setProgress($queue, 0.5, 'Download url request returned');
 
             $this->setProgress($queue, 0.6, 'Saving field value');
@@ -68,10 +68,19 @@ class PollVideoJob extends BaseJob
 
             $this->setProgress($queue, 1, 'Done');
         } else {
+            if ($result) {
+                $this->setProgress($queue, 0.4, 'Saving last result into the field');
+                $element->setFieldValue($this->fieldHandle, $result);
+
+                // Save, but ignore errors.
+                // element, runValidation, propagate, updateIndex
+                \Craft::$app->getElements()->saveElement($element, true, true, false);
+            }
+
             $this->setProgress($queue, 0, 'Delayed retry');
-            // Retry the job after 10 seconds
+            // Retry the job after x seconds
             $this->lastResult = $result;
-            $queue->delay(10)->push($this);
+            $queue->delay($this->attempts)->push($this);
         }
     }
 
