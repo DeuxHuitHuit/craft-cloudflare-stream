@@ -20,7 +20,7 @@
     "email": "open-source@deuxhuithuit.com",
     "issues": "https://github.com/DeuxHuitHuit/craft-cloudflare-stream/issues?state=open",
     "source": "https://github.com/DeuxHuitHuit/craft-cloudflare-stream",
-    "docs": "https://github.com/DeuxHuitHuit/craft-cloudflare-stream/blob/master/README.md"
+    "docs": "https://github.com/DeuxHuitHuit/craft-cloudflare-stream/blob/dev/README.md"
   },
   "require": {
     "php": "8.1.*|8.2.*",
