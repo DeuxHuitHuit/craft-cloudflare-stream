@@ -78,9 +78,9 @@ class PollVideoJob extends BaseJob
             }
 
             $this->setProgress($queue, 0, 'Delayed retry');
-            // Retry the job after x seconds
+            // Retry the job after x * 2 seconds
             $this->lastResult = $result;
-            $queue->delay($this->attempts)->push($this);
+            $queue->delay($this->attempts * 2)->push($this);
         }
     }
 
