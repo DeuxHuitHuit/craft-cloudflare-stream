@@ -19,7 +19,7 @@ class Settings extends Model
     {
         return [
             [['accountId', 'apiToken'], 'required'],
-            ['autoUpload', 'bool'],
+            ['autoUpload', 'boolean'],
         ];
     }
 
