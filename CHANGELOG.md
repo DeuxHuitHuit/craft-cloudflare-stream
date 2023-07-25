@@ -1,5 +1,11 @@
 # Change log
 
+## v1.2.0
+
+* a2463c8a48 Save and display polling status
+* 66a3fd7441 Add thumnails and previews in assets panel
+* 99c4831e7e Better error handling
+
 ## v1.1.0
 
 * 8716878bbc Add support for deleted/restored assets
