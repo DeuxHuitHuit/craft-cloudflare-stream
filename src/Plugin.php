@@ -131,6 +131,50 @@ class Plugin extends \craft\base\Plugin
             }
         );
 
+        \Craft::$app->getAssets()->on(
+            \craft\services\Assets::EVENT_DEFINE_THUMB_URL,
+            function (\craft\events\DefineAssetThumbUrlEvent $event) {
+                if (!$this->isVideoAsset($event->asset)) {
+                    return;
+                }
+
+                $streamField = $this->findStreamingField($event->asset);
+                if (!$streamField) {
+                    return;
+                }
+
+                $fieldData = $event->asset->getFieldValue($streamField->handle);
+                if (!$fieldData || !isset($fieldData['thumbnail'])) {
+                    return;
+                }
+
+                // Use the Stream thumbnail as the asset thumbnail
+                $event->url = $fieldData['thumbnail'];
+            }
+        );
+
+        \Craft::$app->getAssets()->on(
+            \craft\services\Assets::EVENT_REGISTER_PREVIEW_HANDLER,
+            function (\craft\events\AssetPreviewEvent $event) {
+                if (!$this->isVideoAsset($event->asset)) {
+                    return;
+                }
+
+                $streamField = $this->findStreamingField($event->asset);
+                if (!$streamField) {
+                    return;
+                }
+
+                $fieldData = $event->asset->getFieldValue($streamField->handle);
+                if (!$fieldData) {
+                    return;
+                }
+
+                // Use our custom preview handler
+                $event->previewHandler = new assetpreviews\AssetPreviewHandler($event->asset, $fieldData);
+            }
+        );
+
         Event::on(
             \craft\elements\Asset::class,
             \craft\base\Element::EVENT_BEFORE_SAVE,
