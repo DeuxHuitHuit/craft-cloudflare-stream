@@ -1,5 +1,9 @@
 # Change log
 
+## 1.2.1 - 2023-07-25
+
+* 2d7423212d Fix changelog formatting
+
 ## 1.2.0 - 2023-07-25
 
 * a2463c8a48 Save and display polling status
