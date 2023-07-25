@@ -50,7 +50,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         if (!$field instanceof CloudflareVideoStreamField) {
             $this->setProgress($queue, 0.1, 'ERROR: Field is not a Cloudflare Video Stream field');
 
-            throw new \Exception('Field is not a Cloudflare Video Stream field');
+            throw new \Error('Field is not a Cloudflare Video Stream field');
         }
 
         $this->setProgress($queue, 0.2, 'Uploading video to Cloudflare Stream');
@@ -63,17 +63,22 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         if (!$result) {
             $this->setProgress($queue, 0.3, 'ERROR: Upload request failed');
 
-            throw new \Exception('Upload request failed');
+            throw new \Error('Upload request failed');
         }
         if (!empty($result['error'])) {
             $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error'] . ' ' . $result['message']);
 
-            throw new \Exception($result['error'] . ' ' . $result['message']);
+            throw new \Error($result['error'] . ' ' . $result['message']);
         }
 
         $this->setProgress($queue, 0.4, 'Saving craft element');
         $element->setFieldValue($this->fieldHandle, $result);
-        \Craft::$app->getElements()->saveElement($element, true, true, false);
+        // element, runValidation, propagate, updateIndex
+        if (!\Craft::$app->getElements()->saveElement($element, true, true, false)) {
+            $this->setProgress($queue, 1, 'ERROR: Could not save element');
+
+            throw new \Error('Could not save element');
+        }
         $this->setProgress($queue, 0.5, 'Craft element saved');
 
         $this->setProgress($queue, 0.6, 'Pushing polling job');

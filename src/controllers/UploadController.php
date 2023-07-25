@@ -49,7 +49,10 @@ class UploadController extends Controller
         ]);
         \Craft::$app->getQueue()->push($uploadJob);
         $element->setFieldValue($fieldHandle, ['readyToStream' => false]);
-        \Craft::$app->getElements()->saveElement($element, true, true, false);
+        // element, runValidation, propagate, updateIndex
+        if (!\Craft::$app->getElements()->saveElement($element, true, true, false)) {
+            return $this->asJson(['success' => false, 'message' => 'Failed to save asset.']);
+        }
         \Craft::$app->getSession()->setNotice(\Craft::t('cloudflare-stream', 'Video added to Cloudflare Stream successfully'));
 
         return $this->asJson(['success' => true]);

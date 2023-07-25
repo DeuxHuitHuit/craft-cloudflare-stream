@@ -38,7 +38,7 @@ class DeleteVideoJob extends BaseJob
         if (!$field instanceof CloudflareVideoStreamField) {
             $this->setProgress($queue, 0.1, 'ERROR: Field is not a Cloudflare Video Stream field');
 
-            throw new \Exception('Field is not a Cloudflare Video Stream field');
+            throw new \Error('Field is not a Cloudflare Video Stream field');
         }
 
         $this->setProgress($queue, 0.2, 'Sending delete request to Cloudflare Stream');
