@@ -50,7 +50,12 @@ class DeleteVideoJob extends BaseJob
 
         $this->setProgress($queue, 0.4, 'Updating field value');
         $element->setFieldValue($this->fieldHandle, null);
-        \Craft::$app->getElements()->saveElement($element, true, true, false);
+        // element, runValidation, propagate, updateIndex
+        if (!\Craft::$app->getElements()->saveElement($element, true, true, false)) {
+            $this->setProgress($queue, 1, 'ERROR: Could not save element');
+
+            throw new \Error('Could not save element');
+        }
 
         $this->setProgress($queue, 1, 'Done');
     }
