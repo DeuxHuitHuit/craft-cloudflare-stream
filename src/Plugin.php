@@ -7,6 +7,7 @@ use craft\events\RegisterTemplateRootsEvent;
 use craft\services\Fields;
 use craft\web\View;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
+use deuxhuithuit\cfstream\jobs\DeleteVideoJob;
 use deuxhuithuit\cfstream\jobs\UploadVideoJob;
 use yii\base\Event;
 
@@ -33,6 +34,93 @@ class Plugin extends \craft\base\Plugin
         parent::__construct($id, $parent, $config);
     }
 
+    public function beforeAutoUpload(\craft\events\ModelEvent $event)
+    {
+        /** @var \craft\elements\Asset $asset */
+        $asset = $event->sender;
+        if (!$this->isNewVideoAsset($asset)) {
+            return;
+        }
+        if (!$this->isNewValidEvent($event)) {
+            return;
+        }
+        if (!$this->isAutoUploadEnabled()) {
+            return;
+        }
+
+        $streamField = $this->findStreamingField($asset);
+        if (!$streamField) {
+            return;
+        }
+
+        // Set the field value to "not ready"
+        // We need to do this BEFORE the entry gets saved
+        $asset->setFieldValue($streamField->handle, ['readyToStream' => false]);
+    }
+
+    public function autoUpload(\craft\events\ModelEvent $event)
+    {
+        /** @var \craft\elements\Asset $asset */
+        $asset = $event->sender;
+        if (!$this->isNewVideoAsset($asset)) {
+            return;
+        }
+        if (!$this->isNewValidEvent($event)) {
+            return;
+        }
+        if (!$this->isAutoUploadEnabled()) {
+            return;
+        }
+
+        $streamField = $this->findStreamingField($asset);
+        if (!$streamField) {
+            return;
+        }
+
+        // Create and push a new upload job.
+        // This needs to be done AFTER the element gets saved,
+        // since we need its id and url.
+        $uploadJob = new UploadVideoJob([
+            'fieldHandle' => $streamField->handle,
+            'elementId' => $asset->id,
+            'videoUrl' => $asset->getUrl(),
+            'videoName' => $asset->filename,
+        ]);
+        \Craft::$app->getQueue()->push($uploadJob);
+    }
+
+    public function autoDelete(\craft\events\ModelEvent $event)
+    {
+        /** @var \craft\elements\Asset $asset */
+        $asset = $event->sender;
+        if (!$this->isVideoAsset($asset)) {
+            return;
+        }
+        if (!$this->isAutoUploadEnabled()) {
+            return;
+        }
+
+        // For each Stream field, create and push a new delete job, if required.
+        $fields = $asset->getFieldLayout()->getCustomFields();
+        foreach ($fields as $field) {
+            if (!$field instanceof CloudflareVideoStreamField) {
+                continue;
+            }
+
+            $fieldData = $asset->getFieldValue($field->handle);
+            if (!$fieldData || !isset($fieldData['uid'])) {
+                continue;
+            }
+
+            $uploadJob = new DeleteVideoJob([
+                'fieldHandle' => $field->handle,
+                'elementId' => $asset->id,
+                'videoUid' => $fieldData['uid'],
+            ]);
+            \Craft::$app->getQueue()->push($uploadJob);
+        }
+    }
+
     public function init()
     {
         Event::on(
@@ -43,60 +131,28 @@ class Plugin extends \craft\base\Plugin
             }
         );
 
-        // TODO
-        // EVENT_AFTER_DELETE
-        // EVENT_BEFORE_RESTORE
-
         Event::on(
             \craft\elements\Asset::class,
             \craft\base\Element::EVENT_BEFORE_SAVE,
-            function (\craft\events\ModelEvent $event) {
-                /** @var \craft\elements\Asset $asset */
-                $asset = $event->sender;
-                if (!$asset instanceof \craft\elements\Asset) {
-                    return;
-                }
-                if ($asset->kind !== \craft\elements\Asset::KIND_VIDEO) {
-                    return;
-                }
-                if (!$event->isNew) {
-                    return;
-                }
-                if (!$event->isValid) {
-                    return;
-                }
+            [$this, 'beforeAutoUpload']
+        );
 
-                /** @var \deuxhuithuit\cfstream\models\Settings $settings */
-                $settings = $this->getSettings();
-                if (!$settings->isAutoUpload()) {
-                    return;
-                }
+        Event::on(
+            \craft\elements\Asset::class,
+            \craft\base\Element::EVENT_AFTER_SAVE,
+            [$this, 'autoUpload']
+        );
 
-                $fields = $asset->getFieldLayout()->getCustomFields();
+        Event::on(
+            \craft\elements\Asset::class,
+            \craft\base\Element::EVENT_BEFORE_RESTORE,
+            [$this, 'autoUpload']
+        );
 
-                /** @var null|CloudflareVideoStreamField $streamField */
-                $streamField = null;
-                foreach ($fields as $field) {
-                    if ($field instanceof CloudflareVideoStreamField) {
-                        $streamField = $field;
-
-                        break;
-                    }
-                }
-
-                if (!$streamField) {
-                    return;
-                }
-
-                $uploadJob = new UploadVideoJob([
-                    'fieldHandle' => $streamField->handle,
-                    'elementId' => $asset->id,
-                    'videoUrl' => $asset->getUrl(),
-                    'videoName' => $asset->filename,
-                ]);
-                \Craft::$app->getQueue()->push($uploadJob);
-                $asset->setFieldValue($streamField->handle, ['readyToStream' => false]);
-            }
+        Event::on(
+            \craft\elements\Asset::class,
+            \craft\base\Element::EVENT_BEFORE_DELETE,
+            [$this, 'autoDelete']
         );
 
         parent::init();
@@ -113,5 +169,50 @@ class Plugin extends \craft\base\Plugin
             'cloudflare-stream/settings',
             ['settings' => $this->getSettings()]
         );
+    }
+
+    private function isAutoUploadEnabled(): bool
+    {
+        /** @var \deuxhuithuit\cfstream\models\Settings $settings */
+        $settings = $this->getSettings();
+
+        return $settings->isAutoUpload();
+    }
+
+    private function isVideoAsset(?\craft\elements\Asset $asset): bool
+    {
+        if (!$asset) {
+            return false;
+        }
+
+        return $asset->kind === \craft\elements\Asset::KIND_VIDEO;
+    }
+
+    private function isNewVideoAsset(?\craft\elements\Asset $asset): bool
+    {
+        return $this->isVideoAsset($asset)
+            && $asset->getScenario() === \craft\elements\Asset::SCENARIO_CREATE;
+    }
+
+    private function isNewValidEvent(\craft\events\ModelEvent $event): bool
+    {
+        return $event->isNew && $event->isValid;
+    }
+
+    private function findStreamingField(\craft\elements\Asset $asset): ?CloudflareVideoStreamField
+    {
+        $fields = $asset->getFieldLayout()->getCustomFields();
+
+        /** @var null|CloudflareVideoStreamField $streamField */
+        $streamField = null;
+        foreach ($fields as $field) {
+            if ($field instanceof CloudflareVideoStreamField) {
+                $streamField = $field;
+
+                break;
+            }
+        }
+
+        return $streamField;
     }
 }

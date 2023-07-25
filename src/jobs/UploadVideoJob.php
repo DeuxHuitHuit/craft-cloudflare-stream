@@ -6,6 +6,7 @@ use craft\queue\BaseJob;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 
+// TODO: Make cancellable, to cancel the upload if the asset is deleted
 class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
 {
     public $fieldHandle;
@@ -25,16 +26,22 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
 
     public function execute($queue): void
     {
+        $this->setProgress($queue, 0, 'Validating job data');
+
         // Get the entry or element where the field is located
         $element = \Craft::$app->getElements()->getElementById($this->elementId);
         if (!$element) {
-            throw new \Exception('Element not found.');
+            $this->setProgress($queue, 1, 'Element not found');
+
+            return;
         }
 
         // Get the CloudflareVideoStreamField by its handle
         $field = \Craft::$app->getFields()->getFieldByHandle($this->fieldHandle);
         if (!$field) {
-            throw new \Exception('Field not found.');
+            $this->setProgress($queue, 1, 'Field not found');
+
+            return;
         }
 
         $this->setProgress($queue, 0.1, 'Validating Cloudflare Video Stream field');
