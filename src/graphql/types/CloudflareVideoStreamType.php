@@ -19,6 +19,9 @@ class CloudflareVideoStreamType extends ObjectType
                     'type' => Type::string(),
                     'description' => 'A Cloudflare-generated unique identifier for a media item.',
                     'resolve' => function ($value) {
+                        if (!isset($value['uid'])) {
+                            return null;
+                        }
                         return strval($value['uid']);
                     },
                 ],
@@ -27,6 +30,9 @@ class CloudflareVideoStreamType extends ObjectType
                     'type' => Type::string(),
                     'description' => 'The name of the video.',
                     'resolve' => function ($value) {
+                        if (!isset($value['meta']['name'])) {
+                            return null;
+                        }
                         return strval($value['meta']['name']);
                     },
                 ],
@@ -35,6 +41,9 @@ class CloudflareVideoStreamType extends ObjectType
                     'type' => Type::string(),
                     'description' => 'The HLS manifest for the video.',
                     'resolve' => function ($value) {
+                        if (!isset($value['playback']['hls'])) {
+                            return null;
+                        }
                         return strval($value['playback']['hls']);
                     },
                 ],
@@ -43,6 +52,9 @@ class CloudflareVideoStreamType extends ObjectType
                     'type' => Type::string(),
                     'description' => 'DASH Media Presentation Description for the video.',
                     'resolve' => function ($value) {
+                        if (!isset($value['playback']['dash'])) {
+                            return null;
+                        }
                         return strval($value['playback']['dash']);
                     },
                 ],
@@ -51,12 +63,18 @@ class CloudflareVideoStreamType extends ObjectType
                     'type' => Type::string(),
                     'description' => 'The MP4 URL of the video.',
                     'resolve' => function ($value) {
+                        if (!isset($value['mp4Url'])) {
+                            return null;
+                        }
                         return strval($value['mp4Url']);
                     },
                 ],
                 'input' => [
                     'name' => 'input',
                     'resolve' => function ($value) {
+                        if (!isset($value['input'])) {
+                            return [];
+                        }
                         return $value['input'];
                     },
                     'type' => new ObjectType([
@@ -68,7 +86,10 @@ class CloudflareVideoStreamType extends ObjectType
                                 'description' => 'The video height in pixels. A value of -1 means 
                                 the height is unknown.',
                                 'resolve' => function ($value) {
-                                    return $value['height'];
+                                    if (!isset($value['height'])) {
+                                        return null;
+                                    }
+                                    return intval($value['height']);
                                 },
                             ],
                             'width' => [
@@ -77,7 +98,10 @@ class CloudflareVideoStreamType extends ObjectType
                                 'description' => 'The video width in pixels. A value of -1 means 
                                 the height is unknown.',
                                 'resolve' => function ($value) {
-                                    return $value['width'];
+                                    if (!isset($value['width'])) {
+                                        return null;
+                                    }
+                                    return intval($value['width']);
                                 },
                             ],
                         ],
@@ -88,6 +112,9 @@ class CloudflareVideoStreamType extends ObjectType
                     'type' => Type::string(),
                     'description' => 'The name of the video.',
                     'resolve' => function ($value) {
+                        if (!isset($value['preview'])) {
+                            return null;
+                        }
                         return strval($value['preview']);
                     },
                 ],
@@ -96,7 +123,10 @@ class CloudflareVideoStreamType extends ObjectType
                     'type' => Type::int(),
                     'description' => 'The size of the media item in bytes.',
                     'resolve' => function ($value) {
-                        return $value['size'];
+                        if (!isset($value['size'])) {
+                            return null;
+                        }
+                        return intval($value['size']);
                     },
                 ],
                 'thumbnail' => [
@@ -104,6 +134,9 @@ class CloudflareVideoStreamType extends ObjectType
                     'type' => Type::string(),
                     'description' => 'The media item\'s thumbnail URI.',
                     'resolve' => function ($value) {
+                        if (!isset($value['thumbnail'])) {
+                            return null;
+                        }
                         return strval($value['thumbnail']);
                     },
                 ],
@@ -115,12 +148,18 @@ class CloudflareVideoStreamType extends ObjectType
                     percentage, divide the desired timestamp by the total duration of the video. 
                     If this value is not set, the default thumbnail image is taken from 0s of the video.',
                     'resolve' => function ($value) {
+                        if (!isset($value['thumbnailTimestampPct'])) {
+                            return null;
+                        }
                         return strval($value['thumbnailTimestampPct']);
                     },
                 ],
                 'watermark' => [
                     'name' => 'watermark',
                     'resolve' => function ($value) {
+                        if (!isset($value['watermark'])) {
+                            return [];
+                        }
                         return $value['watermark'];
                     },
                     'type' => new ObjectType([
@@ -131,6 +170,9 @@ class CloudflareVideoStreamType extends ObjectType
                                 'description' => 'The date and a time a watermark profile was created.',
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
+                                    if (!isset($value['created'])) {
+                                        return null;
+                                    }
                                     return strval($value['created']);
                                 },
                             ],
@@ -140,6 +182,9 @@ class CloudflareVideoStreamType extends ObjectType
                                 profile was created via direct upload, this field is null.',
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
+                                    if (!isset($value['downloadedFrom'])) {
+                                        return null;
+                                    }
                                     return strval($value['downloadedFrom']);
                                 },
                             ],
@@ -148,7 +193,10 @@ class CloudflareVideoStreamType extends ObjectType
                                 'description' => 'The height of the image in pixels.',
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
-                                    return $value['height'];
+                                    if (!isset($value['height'])) {
+                                        return null;
+                                    }
+                                    return intval($value['height']);
                                 },
                             ],
                             'name' => [
@@ -156,6 +204,9 @@ class CloudflareVideoStreamType extends ObjectType
                                 'description' => 'A short description of the watermark profile.',
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
+                                    if (!isset($value['name'])) {
+                                        return null;
+                                    }
                                     return strval($value['name']);
                                 },
                             ],
@@ -167,7 +218,10 @@ class CloudflareVideoStreamType extends ObjectType
                                 setting this to 1.0 will not make the image completely opaque.',
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
-                                    return $value['opacity'];
+                                    if (!isset($value['opacity'])) {
+                                        return null;
+                                    }
+                                    return intval($value['opacity']);
                                 },
                             ],
                             'padding' => [
@@ -178,7 +232,10 @@ class CloudflareVideoStreamType extends ObjectType
                                 as determined by the algorithm.',
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
-                                    return $value['padding'];
+                                    if (!isset($value['padding'])) {
+                                        return null;
+                                    }
+                                    return intval($value['padding']);
                                 },
                             ],
                             'position' => [
@@ -188,6 +245,9 @@ class CloudflareVideoStreamType extends ObjectType
                                 Note that center ignores the padding parameter.',
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
+                                    if (!isset($value['position'])) {
+                                        return null;
+                                    }
                                     return strval($value['position']);
                                 },
                             ],
@@ -197,9 +257,12 @@ class CloudflareVideoStreamType extends ObjectType
                                 This parameter will adapt to horizontal and vertical videos automatically. 
                                 0.0 indicates no scaling (use the size of the image as-is),
                                 and 1.0 fills the entire video.',
-                                'type' => Type::int(),
+                                'type' => Type::float(),
                                 'resolve' => function ($value) {
-                                    return $value['scale'];
+                                    if (!isset($value['scale'])) {
+                                        return null;
+                                    }
+                                    return floatval($value['scale']);
                                 },
                             ],
                             'size' => [
@@ -207,7 +270,10 @@ class CloudflareVideoStreamType extends ObjectType
                                 'description' => 'The size of the image in bytes.',
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
-                                    return $value['size'];
+                                    if (!isset($value['size'])) {
+                                        return null;
+                                    }
+                                    return intval($value['size']);
                                 },
                             ],
                             'width' => [
@@ -215,7 +281,10 @@ class CloudflareVideoStreamType extends ObjectType
                                 'description' => 'The width of the image in pixels.',
                                 'type' => Type::int(),
                                 'resolve' => function ($value) {
-                                    return $value['width'];
+                                    if (!isset($value['width'])) {
+                                        return null;
+                                    }
+                                    return intval($value['width']);
                                 },
                             ],
                             'uid' => [
@@ -223,6 +292,9 @@ class CloudflareVideoStreamType extends ObjectType
                                 'description' => 'The unique identifier for a watermark profile.',
                                 'type' => Type::string(),
                                 'resolve' => function ($value) {
+                                    if (!isset($value['uid'])) {
+                                        return null;
+                                    }
                                     return strval($value['uid']);
                                 },
                             ],
