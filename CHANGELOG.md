@@ -1,5 +1,10 @@
 # Change log
 
+## 1.2.6 - 2023-07-26
+
+* 9c71085fa6 Fix a bugs in graphql Object Type
+* 902e1922cf Add a graphql example in the docs
+
 ## 1.2.5 - 2023-07-26
 
 * 20d211dc32 Updated icon
