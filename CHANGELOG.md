@@ -1,5 +1,9 @@
 # Change log
 
+## 1.2.5 - 2023-07-26
+
+* 20d211dc32 Updated icon
+
 ## 1.2.4 - 2023-07-25
 
 * 2e955cba59 New icon
