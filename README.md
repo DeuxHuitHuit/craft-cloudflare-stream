@@ -42,7 +42,49 @@ craft plugin/install cloudflare-stream
 
 7) If you are using graphql, there is a type registered to make it easy to request the proper data.
 
+```graphql
+query MyQuery {
+  asset(site: ["en"], volume: "stream") {
+    url
+    kind
+    extension
+    filename
+    ... on stream_Asset {
+      videoStream {
+        uid
+        name
+        size
+        thumbnailTimestampPct
+        thumbnail
+        preview
+        hls
+        dash
+        mp4
+        watermark {
+          uid
+          created
+          downloadedFrom
+          height
+          name
+          opacity
+          padding
+          position
+          scale
+          size
+          width
+        }
+        input {
+          width
+          height
+        }
+      }
+    }
+  }
+}
+```
+
 This extension uses Craft's Queue system, so make sure it works properly.
+Please make sure that Craft's max upload limit is also properly set.
 
 Made with ❤️ in Montréal.
 
