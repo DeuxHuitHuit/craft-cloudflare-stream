@@ -23,7 +23,7 @@
     "docs": "https://github.com/DeuxHuitHuit/craft-cloudflare-stream/blob/dev/README.md"
   },
   "require": {
-    "php": "8.1.*|8.2.*",
+    "php": "^8.1|^8.2",
     "craftcms/cms": "^4.4.0"
   },
   "autoload": {
