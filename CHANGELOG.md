@@ -1,5 +1,9 @@
 # Change log
 
+## 1.2.7 - 2023-08-30
+
+* 3e8badccee Try a different syntax for php req
+
 ## 1.2.6 - 2023-07-26
 
 * 9c71085fa6 Fix a bugs in graphql Object Type
