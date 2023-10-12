@@ -11,6 +11,12 @@ class CloudflareVideoStreamClient
 
     public function __construct(\deuxhuithuit\cfstream\models\Settings $config)
     {
+        if (!$config->getApiToken()) {
+            throw new \Error('No API token found');
+        }
+        if (!$config->getAccountId()) {
+            throw new \Error('No account ID found');
+        }
         $this->config = $config;
     }
 
