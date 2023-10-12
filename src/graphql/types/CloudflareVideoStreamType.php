@@ -22,6 +22,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['uid'])) {
                             return null;
                         }
+
                         return strval($value['uid']);
                     },
                 ],
@@ -33,6 +34,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['meta']['name'])) {
                             return null;
                         }
+
                         return strval($value['meta']['name']);
                     },
                 ],
@@ -44,6 +46,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['playback']['hls'])) {
                             return null;
                         }
+
                         return strval($value['playback']['hls']);
                     },
                 ],
@@ -55,6 +58,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['playback']['dash'])) {
                             return null;
                         }
+
                         return strval($value['playback']['dash']);
                     },
                 ],
@@ -66,6 +70,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['mp4Url'])) {
                             return null;
                         }
+
                         return strval($value['mp4Url']);
                     },
                 ],
@@ -75,6 +80,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['input'])) {
                             return [];
                         }
+
                         return $value['input'];
                     },
                     'type' => new ObjectType([
@@ -89,6 +95,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['height'])) {
                                         return null;
                                     }
+
                                     return intval($value['height']);
                                 },
                             ],
@@ -101,6 +108,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['width'])) {
                                         return null;
                                     }
+
                                     return intval($value['width']);
                                 },
                             ],
@@ -115,6 +123,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['preview'])) {
                             return null;
                         }
+
                         return strval($value['preview']);
                     },
                 ],
@@ -126,6 +135,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['size'])) {
                             return null;
                         }
+
                         return intval($value['size']);
                     },
                 ],
@@ -137,6 +147,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['thumbnail'])) {
                             return null;
                         }
+
                         return strval($value['thumbnail']);
                     },
                 ],
@@ -151,6 +162,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['thumbnailTimestampPct'])) {
                             return null;
                         }
+
                         return strval($value['thumbnailTimestampPct']);
                     },
                 ],
@@ -160,6 +172,7 @@ class CloudflareVideoStreamType extends ObjectType
                         if (!isset($value['watermark'])) {
                             return [];
                         }
+
                         return $value['watermark'];
                     },
                     'type' => new ObjectType([
@@ -173,6 +186,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['created'])) {
                                         return null;
                                     }
+
                                     return strval($value['created']);
                                 },
                             ],
@@ -185,6 +199,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['downloadedFrom'])) {
                                         return null;
                                     }
+
                                     return strval($value['downloadedFrom']);
                                 },
                             ],
@@ -196,6 +211,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['height'])) {
                                         return null;
                                     }
+
                                     return intval($value['height']);
                                 },
                             ],
@@ -207,6 +223,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['name'])) {
                                         return null;
                                     }
+
                                     return strval($value['name']);
                                 },
                             ],
@@ -221,6 +238,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['opacity'])) {
                                         return null;
                                     }
+
                                     return intval($value['opacity']);
                                 },
                             ],
@@ -235,6 +253,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['padding'])) {
                                         return null;
                                     }
+
                                     return intval($value['padding']);
                                 },
                             ],
@@ -248,6 +267,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['position'])) {
                                         return null;
                                     }
+
                                     return strval($value['position']);
                                 },
                             ],
@@ -262,6 +282,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['scale'])) {
                                         return null;
                                     }
+
                                     return floatval($value['scale']);
                                 },
                             ],
@@ -273,6 +294,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['size'])) {
                                         return null;
                                     }
+
                                     return intval($value['size']);
                                 },
                             ],
@@ -284,6 +306,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['width'])) {
                                         return null;
                                     }
+
                                     return intval($value['width']);
                                 },
                             ],
@@ -295,6 +318,7 @@ class CloudflareVideoStreamType extends ObjectType
                                     if (!isset($value['uid'])) {
                                         return null;
                                     }
+
                                     return strval($value['uid']);
                                 },
                             ],
