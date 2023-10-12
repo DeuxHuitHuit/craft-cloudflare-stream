@@ -93,7 +93,7 @@ class CloudflareVideoStreamField extends Field
         ]);
     }
 
-    public function getContentGqlType(): Type|array
+    public function getContentGqlType(): array|Type
     {
         $type = new CloudflareVideoStreamType();
         $typeName = $type->name;
