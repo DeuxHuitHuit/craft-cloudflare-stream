@@ -1,5 +1,9 @@
 # Change log
 
+## 1.2.8 - 2023-10-12
+
+* dcf26c85f9 (fix) Validate the config upon client creation (#1)
+
 ## 1.2.7 - 2023-08-30
 
 * 3e8badccee Try a different syntax for php req
