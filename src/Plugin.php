@@ -3,9 +3,9 @@
 namespace deuxhuithuit\cfstream;
 
 use craft\console\Controller;
+use craft\events\DefineConsoleActionsEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterTemplateRootsEvent;
-use craft\events\DefineConsoleActionsEvent;
 use craft\services\Fields;
 use craft\web\View;
 use deuxhuithuit\cfstream\controllers\ReuploadController;
@@ -205,15 +205,16 @@ class Plugin extends \craft\base\Plugin
         Event::on(
             ReuploadController::class,
             Controller::EVENT_DEFINE_ACTIONS,
-            function(DefineConsoleActionsEvent $event) {
+            function (DefineConsoleActionsEvent $event) {
                 $event->actions['reupload'] = [
                     'options' => [],
                     'helpSummary' => 'Re-uploads all Cloudflare stream assets.',
-                    'action' => function(): int {
+                    'action' => function (): int {
                         /** @var CliController $controller */
                         $controller = \Craft::$app->controller;
+
                         return $controller->actionReupload();
-                    }
+                    },
                 ];
             }
         );
