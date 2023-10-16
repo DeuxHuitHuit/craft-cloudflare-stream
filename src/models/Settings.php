@@ -9,10 +9,12 @@ class Settings extends Model
 {
     public $accountId = '';
     public $apiToken = '';
+
     /**
      * @var bool
      */
     public $autoUpload = false;
+
     /**
      * @var bool
      */
@@ -23,7 +25,7 @@ class Settings extends Model
         return [
             [['accountId', 'apiToken'], 'required'],
             ['autoUpload', 'boolean'],
-            ['useFormUpload', 'boolean']
+            ['useFormUpload', 'boolean'],
         ];
     }
 

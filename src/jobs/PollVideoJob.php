@@ -14,11 +14,6 @@ class PollVideoJob extends BaseJob
     public $lastResult;
     public $attempts = 0;
 
-    private function delay()
-    {
-        return $this->attempts * 2;
-    }
-
     public function getTtr()
     {
         return 10 + $this->delay();
@@ -97,5 +92,10 @@ class PollVideoJob extends BaseJob
     protected function defaultDescription(): ?string
     {
         return 'Polling video and updating field value';
+    }
+
+    private function delay()
+    {
+        return $this->attempts * 2;
     }
 }

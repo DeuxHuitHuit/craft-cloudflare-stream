@@ -2,7 +2,6 @@
 
 namespace deuxhuithuit\cfstream\client;
 
-use Exception;
 use GuzzleHttp;
 
 class CloudflareVideoStreamClient
@@ -13,10 +12,10 @@ class CloudflareVideoStreamClient
     public function __construct(\deuxhuithuit\cfstream\models\Settings $config)
     {
         if (!$config->getApiToken()) {
-            throw new Exception('No API token found');
+            throw new \Exception('No API token found');
         }
         if (!$config->getAccountId()) {
-            throw new Exception('No account ID found');
+            throw new \Exception('No account ID found');
         }
         $this->config = $config;
     }
@@ -61,10 +60,10 @@ class CloudflareVideoStreamClient
             'headers' => $this->createHttpHeaders(),
             'multipart' => [
                 [
-                    'name'     => 'file',
+                    'name' => 'file',
                     'contents' => fopen($videoPath . '/' . $videoFilename, 'r'),
                     'filename' => $videoFilename,
-                ]
+                ],
             ],
             'http_errors' => false,
         ]);
