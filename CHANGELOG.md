@@ -1,5 +1,11 @@
 # Change log
 
+## 1.4.0 - 2023-10-16
+
+* ae76646657 (feat) Add support for uploads via form data (#5)
+* 5ab0e3174f (fix) Prevent overflow of the progressLabel field (#4)
+* 6c27238580 (fix) lower ttr to 2 minutes (#3)
+
 ## 1.3.0 - 2023-10-16
 
 * 4163fd0012 (feat) Add reupload cli command (#2)
