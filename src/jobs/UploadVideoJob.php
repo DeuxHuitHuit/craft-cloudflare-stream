@@ -16,7 +16,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
 
     public function getTtr()
     {
-        return 15 * 60;
+        return 2 * 60; // 2 minutes
     }
 
     public function canRetry($attempt, $error)
