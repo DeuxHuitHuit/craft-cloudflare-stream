@@ -24,3 +24,11 @@
   name: 'autoUpload',
   on: settings.autoUpload,
 }) }}
+
+<br/>
+
+{{ forms.lightswitch({
+  label: 'Upload videos to Cloudflare Stream usign form data instead of via the asset`s url'|t('cloudflare-stream'),
+  name: 'useFormUpload',
+  on: settings.useFormUpload,
+}) }}

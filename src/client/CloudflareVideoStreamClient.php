@@ -2,6 +2,7 @@
 
 namespace deuxhuithuit\cfstream\client;
 
+use Exception;
 use GuzzleHttp;
 
 class CloudflareVideoStreamClient
@@ -12,10 +13,10 @@ class CloudflareVideoStreamClient
     public function __construct(\deuxhuithuit\cfstream\models\Settings $config)
     {
         if (!$config->getApiToken()) {
-            throw new \Error('No API token found');
+            throw new Exception('No API token found');
         }
         if (!$config->getAccountId()) {
-            throw new \Error('No account ID found');
+            throw new Exception('No account ID found');
         }
         $this->config = $config;
     }
@@ -32,12 +33,39 @@ class CloudflareVideoStreamClient
         ];
     }
 
-    public function uploadVideo(string $videoUrl, string $videoName)
+    public function uploadVideoByUrl(string $videoUrl, string $videoName)
     {
         $client = new GuzzleHttp\Client();
         $uploadRes = $client->request('POST', $this->createCfUrl('/stream/copy'), [
             'headers' => $this->createHttpHeaders(),
             'body' => json_encode(['url' => $videoUrl, 'meta' => ['name' => $videoName]]),
+            'http_errors' => false,
+        ]);
+
+        if ($uploadRes->getStatusCode() !== 200) {
+            return [
+                'error' => 'Error uploading video',
+                'message' => $uploadRes->getBody(),
+            ];
+        }
+
+        $data = json_decode($uploadRes->getBody(), true);
+
+        return $data['result'];
+    }
+
+    public function uploadVideoByPath(string $videoPath, string $videoFilename)
+    {
+        $client = new GuzzleHttp\Client();
+        $uploadRes = $client->request('POST', $this->createCfUrl('/stream'), [
+            'headers' => $this->createHttpHeaders(),
+            'multipart' => [
+                [
+                    'name'     => 'file',
+                    'contents' => fopen($videoPath . '/' . $videoFilename, 'r'),
+                    'filename' => $videoFilename,
+                ]
+            ],
             'http_errors' => false,
         ]);
 

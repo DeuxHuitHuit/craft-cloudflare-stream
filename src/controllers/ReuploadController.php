@@ -43,6 +43,7 @@ class ReuploadController extends Controller
                             'elementId' => $asset->id,
                             'videoUrl' => $asset->getUrl(),
                             'videoName' => $asset->title ?? $asset->filename,
+                            'videoPath' => $asset->getFs()->rootPath,
                         ]);
                         \Craft::$app->getQueue()->push($uploadJob);
                         ++$uploadCount;

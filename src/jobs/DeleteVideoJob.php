@@ -12,6 +12,11 @@ class DeleteVideoJob extends BaseJob
     public $elementId;
     public $videoUid;
 
+    public function getTtr()
+    {
+        return 30; // 30 seconds
+    }
+
     public function execute($queue): void
     {
         $this->setProgress($queue, 0, 'Validating job data');
