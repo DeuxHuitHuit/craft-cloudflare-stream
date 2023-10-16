@@ -83,6 +83,12 @@ query MyQuery {
 }
 ```
 
+8) You can also mass re-upload everything via Craft's cli
+
+```sh
+./craft cloudflare-stream/reupload
+```
+
 This extension uses Craft's Queue system, so make sure it works properly.
 Please make sure that Craft's max upload limit is also properly set.
 
