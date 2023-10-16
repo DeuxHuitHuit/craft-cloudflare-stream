@@ -1,5 +1,9 @@
 # Change log
 
+## 1.3.0 - 2023-10-16
+
+* 4163fd0012 (feat) Add reupload cli command (#2)
+
 ## 1.2.8 - 2023-10-12
 
 * dcf26c85f9 (fix) Validate the config upon client creation (#1)
