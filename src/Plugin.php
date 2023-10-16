@@ -2,10 +2,13 @@
 
 namespace deuxhuithuit\cfstream;
 
+use craft\console\Controller;
+use craft\events\DefineConsoleActionsEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\services\Fields;
 use craft\web\View;
+use deuxhuithuit\cfstream\controllers\ReuploadController;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 use deuxhuithuit\cfstream\jobs\DeleteVideoJob;
 use deuxhuithuit\cfstream\jobs\UploadVideoJob;
@@ -197,6 +200,23 @@ class Plugin extends \craft\base\Plugin
             \craft\elements\Asset::class,
             \craft\base\Element::EVENT_BEFORE_DELETE,
             [$this, 'autoDelete']
+        );
+
+        Event::on(
+            ReuploadController::class,
+            Controller::EVENT_DEFINE_ACTIONS,
+            function (DefineConsoleActionsEvent $event) {
+                $event->actions['reupload'] = [
+                    'options' => [],
+                    'helpSummary' => 'Re-uploads all Cloudflare stream assets.',
+                    'action' => function (): int {
+                        /** @var CliController $controller */
+                        $controller = \Craft::$app->controller;
+
+                        return $controller->actionReupload();
+                    },
+                ];
+            }
         );
 
         parent::init();
