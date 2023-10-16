@@ -66,7 +66,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
             throw new \Error('Upload request failed');
         }
         if (!empty($result['error'])) {
-            $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error'] . ' ' . $result['message']);
+            $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error']);
 
             throw new \Error($result['error'] . ' ' . $result['message']);
         }
