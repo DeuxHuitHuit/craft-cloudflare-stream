@@ -88,6 +88,7 @@ class Plugin extends \craft\base\Plugin
             'elementId' => $asset->id,
             'videoUrl' => $asset->getUrl(),
             'videoName' => $asset->filename,
+            'videoPath' => $asset->getFs()->rootPath,
         ]);
         \Craft::$app->getQueue()->push($uploadJob);
     }

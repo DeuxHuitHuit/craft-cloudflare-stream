@@ -14,6 +14,11 @@ class PollVideoJob extends BaseJob
     public $lastResult;
     public $attempts = 0;
 
+    public function getTtr()
+    {
+        return 10 + $this->delay();
+    }
+
     public function execute($queue): void
     {
         $this->setProgress($queue, 0, 'Validating job data');
@@ -80,12 +85,17 @@ class PollVideoJob extends BaseJob
             $this->setProgress($queue, 0, 'Delayed retry');
             // Retry the job after x * 2 seconds
             $this->lastResult = $result;
-            $queue->delay($this->attempts * 2)->push($this);
+            $queue->delay($this->delay())->push($this);
         }
     }
 
     protected function defaultDescription(): ?string
     {
         return 'Polling video and updating field value';
+    }
+
+    private function delay()
+    {
+        return $this->attempts * 2;
     }
 }

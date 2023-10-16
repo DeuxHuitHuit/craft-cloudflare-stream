@@ -5,6 +5,7 @@ namespace deuxhuithuit\cfstream\jobs;
 use craft\queue\BaseJob;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
+use deuxhuithuit\cfstream\models\Settings;
 
 // TODO: Make cancellable, to cancel the upload if the asset is deleted
 class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
@@ -13,6 +14,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
     public $elementId;
     public $videoUrl;
     public $videoName;
+    public $videoPath;
 
     public function getTtr()
     {
@@ -55,8 +57,15 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
 
         $this->setProgress($queue, 0.2, 'Uploading video to Cloudflare Stream');
 
-        $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->getSettings());
-        $result = $client->uploadVideo($this->videoUrl, $this->videoName);
+        /** @var Settings */
+        $settings = \deuxhuithuit\cfstream\Plugin::getInstance()->getSettings();
+        $client = new CloudflareVideoStreamClient($settings);
+        $result = null;
+        if ($settings->isUsingFormUpload()) {
+            $result = $client->uploadVideoByPath($this->videoPath, basename($this->videoUrl));
+        } else {
+            $result = $client->uploadVideoByUrl($this->videoUrl, $this->videoName);
+        }
 
         $this->setProgress($queue, 0.3, 'Uploading request returned');
 

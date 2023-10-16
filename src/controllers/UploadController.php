@@ -46,6 +46,7 @@ class UploadController extends Controller
             'elementId' => $elementId,
             'videoUrl' => $videoUrl,
             'videoName' => $videoName,
+            'videoPath' => $asset->getFs()->rootPath,
         ]);
         \Craft::$app->getQueue()->push($uploadJob);
         $element->setFieldValue($fieldHandle, ['readyToStream' => false]);
