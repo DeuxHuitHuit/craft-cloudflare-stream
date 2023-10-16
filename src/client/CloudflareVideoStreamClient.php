@@ -20,16 +20,23 @@ class CloudflareVideoStreamClient
         $this->config = $config;
     }
 
+    public function createCfUrl(string $endpoint)
+    {
+        return $this->baseUrl . $this->config->getAccountId() . $endpoint;
+    }
+
+    public function createHttpHeaders()
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->config->getApiToken(),
+        ];
+    }
+
     public function uploadVideo(string $videoUrl, string $videoName)
     {
         $client = new GuzzleHttp\Client();
-        $accountId = $this->config->getAccountId();
-        $apiToken = $this->config->getApiToken();
-        $url = $this->baseUrl . $accountId . '/stream/copy';
-        $uploadRes = $client->request('POST', $url, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $apiToken,
-            ],
+        $uploadRes = $client->request('POST', $this->createCfUrl('/stream/copy'), [
+            'headers' => $this->createHttpHeaders(),
             'body' => json_encode(['url' => $videoUrl, 'meta' => ['name' => $videoName]]),
             'http_errors' => false,
         ]);
@@ -49,13 +56,8 @@ class CloudflareVideoStreamClient
     public function getVideo(string $videoUid)
     {
         $client = new GuzzleHttp\Client();
-        $accountId = $this->config->getAccountId();
-        $apiToken = $this->config->getApiToken();
-        $url = $this->baseUrl . $accountId . '/stream/' . $videoUid;
-        $res = $client->request('GET', $url, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $apiToken,
-            ],
+        $res = $client->request('GET', $this->createCfUrl('/stream/' . $videoUid), [
+            'headers' => $this->createHttpHeaders(),
             'http_errors' => false,
         ]);
         $data = json_decode($res->getBody(), true);
@@ -66,13 +68,8 @@ class CloudflareVideoStreamClient
     public function getDownloadUrl(string $videoUid)
     {
         $client = new GuzzleHttp\Client();
-        $accountId = $this->config->getAccountId();
-        $apiToken = $this->config->getApiToken();
-        $url = $this->baseUrl . $accountId . '/stream/' . $videoUid . '/downloads';
-        $res = $client->request('POST', $url, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $apiToken,
-            ],
+        $res = $client->request('POST', $this->createCfUrl('/stream/' . $videoUid . '/downloads'), [
+            'headers' => $this->createHttpHeaders(),
             'http_errors' => false,
         ]);
         $data = json_decode($res->getBody(), true);
@@ -83,13 +80,8 @@ class CloudflareVideoStreamClient
     public function deleteVideo(string $videoUid)
     {
         $client = new GuzzleHttp\Client();
-        $accountId = $this->config->getAccountId();
-        $apiToken = $this->config->getApiToken();
-        $url = $this->baseUrl . $accountId . '/stream/' . $videoUid;
-        $client->request('DELETE', $url, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $apiToken,
-            ],
+        $client->request('DELETE', $this->createCfUrl('/stream/' . $videoUid), [
+            'headers' => $this->createHttpHeaders(),
             'http_errors' => false,
         ]);
     }
