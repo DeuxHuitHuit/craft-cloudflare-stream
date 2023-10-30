@@ -1,5 +1,10 @@
 # Change log
 
+## 1.4.1 - 2023-10-30
+
+* daca75ea12 Add errors + update help text
+* 9307dbb34c Add schema version prop
+
 ## 1.4.0 - 2023-10-16
 
 * ae76646657 (feat) Add support for uploads via form data (#5)
