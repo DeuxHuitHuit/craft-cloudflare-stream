@@ -6,15 +6,17 @@
   instructions: 'Find your Account ID in the <a href="https://dash.cloudflare.com/" target="_blank">Cloudflare Dashboard</a>'|t('cloudflare-stream'),
   name: 'accountId',
   value: settings.accountId,
+  errors: settings.getErrors('accountId'),
   required: true,
   suggestEnvVars: true
 }) }}
 
 {{ forms.autosuggestField({
   label: 'API Token'|t('cloudflare-stream'),
-  instructions: 'Create a <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank">Cloudflare API Token</a> with the <code>Stream: Read</code> permission.'|t('cloudflare-stream'),
+  instructions: 'Create a <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank">Cloudflare API Token</a> with the <code>Stream: Read</code> and <code>Stream: Edit</code> permissions.'|t('cloudflare-stream'),
   name: 'apiToken',
   value: settings.apiToken,
+  errors: settings.getErrors('apiToken'),
   required: true,
   suggestEnvVars: true
 }) }}
