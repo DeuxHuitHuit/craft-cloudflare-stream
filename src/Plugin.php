@@ -17,6 +17,7 @@ use yii\base\Event;
 class Plugin extends \craft\base\Plugin
 {
     public bool $hasCpSettings = true;
+    public string $schemaVersion = '1.4.0';
 
     public function __construct($id, $parent = null, array $config = [])
     {
