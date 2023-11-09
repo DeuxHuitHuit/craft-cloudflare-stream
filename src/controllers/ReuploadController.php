@@ -36,6 +36,7 @@ class ReuploadController extends Controller
                 $this->stdout(PHP_EOL);
 
                 $entries = Asset::find()->volumeId($volume->id)->all();
+                /** @var \craft\elements\Asset $asset */
                 foreach ($entries as $asset) {
                     if (isset($asset->videoStream)) {
                         $uploadJob = new UploadVideoJob([
@@ -43,7 +44,7 @@ class ReuploadController extends Controller
                             'elementId' => $asset->id,
                             'videoUrl' => $asset->getUrl(),
                             'videoName' => $asset->title ?? $asset->filename,
-                            'videoPath' => $asset->getFs()->rootPath,
+                            'videoPath' => $asset->getVolume()->getFs()->rootPath,
                         ]);
                         \Craft::$app->getQueue()->push($uploadJob);
                         ++$uploadCount;

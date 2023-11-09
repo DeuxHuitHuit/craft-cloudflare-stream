@@ -33,6 +33,10 @@ class UploadController extends Controller
         if (!$element) {
             return $this->asJson(['success' => false, 'message' => 'Element not found.']);
         }
+        $videoPath = '';
+        if ($element instanceof \craft\elements\Asset) {
+            $videoPath = $element->getVolume()->getFs()->rootPath;
+        }
 
         /**
          * @var CloudflareVideoStreamField $field
@@ -46,7 +50,7 @@ class UploadController extends Controller
             'elementId' => $elementId,
             'videoUrl' => $videoUrl,
             'videoName' => $videoName,
-            'videoPath' => $asset->getFs()->rootPath,
+            'videoPath' => $videoPath,
         ]);
         \Craft::$app->getQueue()->push($uploadJob);
         $element->setFieldValue($fieldHandle, ['readyToStream' => false]);
