@@ -1,5 +1,9 @@
 # Change log
 
+## 1.4.2 - 2023-11-09
+
+* 335db74590 Fix broken video path
+
 ## 1.4.1 - 2023-10-30
 
 * daca75ea12 Add errors + update help text
