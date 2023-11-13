@@ -117,9 +117,18 @@ class CloudflareVideoStreamClient
     public function deleteVideo(string $videoUid)
     {
         $client = new GuzzleHttp\Client();
-        $client->request('DELETE', $this->createCfUrl('/stream/' . $videoUid), [
+        $res = $client->request('DELETE', $this->createCfUrl('/stream/' . $videoUid), [
             'headers' => $this->createHttpHeaders(),
             'http_errors' => false,
         ]);
+        if ($res->getStatusCode() !== 200) {
+            return [
+                'error' => 'Error deleting video',
+                'message' => $res->getBody(),
+            ];
+        }
+        return [
+            'success' => true,
+        ];
     }
 }

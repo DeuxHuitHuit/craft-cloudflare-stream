@@ -21,19 +21,17 @@ class DeleteVideoJob extends BaseJob
     {
         $this->setProgress($queue, 0, 'Validating job data');
 
-        // Get the entry or element where the field is located
+        // Check to make sure the entry does not exist anymore
         $element = \Craft::$app->getElements()->getElementById($this->elementId);
-        if (!$element) {
-            $this->setProgress($queue, 1, 'Element not found');
-
-            return;
+        if ($element) {
+            throw new \Error('Element still exists');
         }
 
         // Get the CloudflareVideoStreamField by its handle
         $field = \Craft::$app->getFields()->getFieldByHandle($this->fieldHandle);
         if (!$field) {
+            // Ignore deleted fields
             $this->setProgress($queue, 1, 'Field not found');
-
             return;
         }
 
@@ -49,20 +47,25 @@ class DeleteVideoJob extends BaseJob
         $this->setProgress($queue, 0.2, 'Sending delete request to Cloudflare Stream');
 
         $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->settings);
-        $client->deleteVideo($this->videoUid);
+        $result = $client->deleteVideo($this->videoUid);
 
         $this->setProgress($queue, 0.3, 'Delete request returned');
 
-        $this->setProgress($queue, 0.4, 'Updating field value');
-        $element->setFieldValue($this->fieldHandle, null);
-        // element, runValidation, propagate, updateIndex
-        if (!\Craft::$app->getElements()->saveElement($element, true, true, false)) {
-            $this->setProgress($queue, 1, 'ERROR: Could not save element');
+        if (!$result) {
+            $this->setProgress($queue, 0.3, 'ERROR: Upload request failed');
+            \Craft::error('Delete request failed.', __METHOD__);
 
-            throw new \Error('Could not save element');
+            throw new \Error('Delete request failed');
+        } elseif (!empty($result['error'])) {
+            $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error']);
+            \Craft::error('Delete request failed.' . $result['error'] . ' ' . $result['message'], __METHOD__);
+
+            throw new \Error($result['error'] . ' ' . $result['message']);
         }
 
-        $this->setProgress($queue, 1, 'Done');
+        // Log the success
+        \Craft::info('Video deleted from Cloudflare Stream.', __METHOD__);
+        $this->setProgress($queue, 1, 'Delete successful');
     }
 
     protected function defaultDescription(): ?string

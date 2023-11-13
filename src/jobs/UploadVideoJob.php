@@ -33,16 +33,16 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         // Get the entry or element where the field is located
         $element = \Craft::$app->getElements()->getElementById($this->elementId);
         if (!$element) {
+            // Ignore deleted entries
             $this->setProgress($queue, 1, 'Element not found');
-
             return;
         }
 
         // Get the CloudflareVideoStreamField by its handle
         $field = \Craft::$app->getFields()->getFieldByHandle($this->fieldHandle);
         if (!$field) {
+            // Ignore deleted fields
             $this->setProgress($queue, 1, 'Field not found');
-
             return;
         }
 
@@ -62,8 +62,10 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         $client = new CloudflareVideoStreamClient($settings);
         $result = null;
         if ($settings->isUsingFormUpload()) {
+            \Craft::info('Uploading video by path', __METHOD__);
             $result = $client->uploadVideoByPath($this->videoPath, basename($this->videoUrl));
         } else {
+            \Craft::info('Uploading video by url', __METHOD__);
             $result = $client->uploadVideoByUrl($this->videoUrl, $this->videoName);
         }
 
@@ -71,11 +73,12 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
 
         if (!$result) {
             $this->setProgress($queue, 0.3, 'ERROR: Upload request failed');
+            \Craft::error('Upload request failed.', __METHOD__);
 
             throw new \Error('Upload request failed');
-        }
-        if (!empty($result['error'])) {
+        } elseif (!empty($result['error'])) {
             $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error']);
+            \Craft::error('Upload request failed.' . $result['error'] . ' ' . $result['message'], __METHOD__);
 
             throw new \Error($result['error'] . ' ' . $result['message']);
         }
@@ -86,6 +89,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         if (!\Craft::$app->getElements()->saveElement($element, true, true, false)) {
             $this->setProgress($queue, 1, 'ERROR: Could not save element');
 
+            \Craft::error('Could not save element');
             throw new \Error('Could not save element');
         }
         $this->setProgress($queue, 0.5, 'Craft element saved');
