@@ -1,5 +1,11 @@
 # Change log
 
+## 1.4.3 - 2023-11-13
+
+* 6abeaa8c0b (fix) Properly handle errors
+* b74863a835 (fix) Make sure the file exists before upload
+* 05998c16bb (fix) Properly compute the asset's path
+
 ## 1.4.2 - 2023-11-09
 
 * 335db74590 Fix broken video path
