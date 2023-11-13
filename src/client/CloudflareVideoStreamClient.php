@@ -56,17 +56,27 @@ class CloudflareVideoStreamClient
     public function uploadVideoByPath(string $videoPath, string $videoFilename)
     {
         $client = new GuzzleHttp\Client();
+        $fullPath = $videoPath . '/' . $videoFilename;
+        $file = fopen($fullPath, 'r');
+        if (!$file) {
+            return [
+                'error' => 'Error opening video file',
+                'message' => "File '$fullPath' not found",
+            ];
+        }
         $uploadRes = $client->request('POST', $this->createCfUrl('/stream'), [
             'headers' => $this->createHttpHeaders(),
             'multipart' => [
                 [
                     'name' => 'file',
-                    'contents' => fopen($videoPath . '/' . $videoFilename, 'r'),
+                    'contents' => $file,
                     'filename' => $videoFilename,
                 ],
             ],
             'http_errors' => false,
         ]);
+
+        fclose($file);
 
         if ($uploadRes->getStatusCode() !== 200) {
             return [
