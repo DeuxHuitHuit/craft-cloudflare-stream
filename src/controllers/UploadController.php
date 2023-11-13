@@ -35,7 +35,7 @@ class UploadController extends Controller
         }
         $videoPath = '';
         if ($element instanceof \craft\elements\Asset) {
-            $videoPath = $element->getVolume()->getFs()->rootPath;
+            $videoPath = \deuxhuithuit\cfstream\Folder::getAssetFolderPath($element);
         }
 
         /**
