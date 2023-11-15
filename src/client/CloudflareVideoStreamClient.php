@@ -56,7 +56,8 @@ class CloudflareVideoStreamClient
     public function uploadVideoByPath(string $videoPath, string $videoFilename)
     {
         $client = new GuzzleHttp\Client();
-        $fullPath = $videoPath . '/' . $videoFilename;
+        $fullPath = rtrim($videoPath, '/') . '/' . $videoFilename;
+        // Guzzle might close the file for us...
         $file = fopen($fullPath, 'r');
         if (!$file) {
             return [
@@ -76,7 +77,9 @@ class CloudflareVideoStreamClient
             'http_errors' => false,
         ]);
 
-        fclose($file);
+        if (\is_resource($file)) {
+            fclose($file);
+        }
 
         if ($uploadRes->getStatusCode() !== 200) {
             return [
