@@ -1,5 +1,9 @@
 # Change log
 
+## 1.4.4 - 2023-11-15
+
+* 87ce93d209 Trim trailing / on video path
+
 ## 1.4.3 - 2023-11-13
 
 * 6abeaa8c0b (fix) Properly handle errors
