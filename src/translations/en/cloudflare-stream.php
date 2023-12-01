@@ -2,7 +2,7 @@
 
 return [
     // DeleteController.php
-    'Video removed from Cloudflare Stream successfully' => 'Video removed from Cloudflare Stream successfully.',
+    'Video successfully scheduled to be removed from Cloudflare Stream' => 'Video successfully scheduled to be removed from Cloudflare Stream.',
     // UploadController.php
     'Video added to Cloudflare Stream successfully' => 'Video added to Cloudflare Stream successfully.',
     // added.twig

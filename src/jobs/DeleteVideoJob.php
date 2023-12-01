@@ -11,6 +11,7 @@ class DeleteVideoJob extends BaseJob
     public $fieldHandle;
     public $elementId;
     public $videoUid;
+    public $validateElementIsDeleted = true;
 
     public function getTtr()
     {
@@ -21,10 +22,12 @@ class DeleteVideoJob extends BaseJob
     {
         $this->setProgress($queue, 0, 'Validating job data');
 
-        // Check to make sure the entry does not exist anymore
-        $element = \Craft::$app->getElements()->getElementById($this->elementId);
-        if ($element) {
-            throw new \Error('Element still exists');
+        // Check to make sure the entry does not exist anymore, if requested
+        if ($this->validateElementIsDeleted) {
+            $element = \Craft::$app->getElements()->getElementById($this->elementId);
+            if ($element) {
+                throw new \Error('Element still exists');
+            }
         }
 
         // Get the CloudflareVideoStreamField by its handle
@@ -70,6 +73,6 @@ class DeleteVideoJob extends BaseJob
 
     protected function defaultDescription(): ?string
     {
-        return 'Deleting video from Cloudflare Stream and updating field value';
+        return "Deleting video {$this->videoUid} from Cloudflare Stream";
     }
 }

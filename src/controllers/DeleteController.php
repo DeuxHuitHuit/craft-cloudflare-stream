@@ -37,18 +37,27 @@ class DeleteController extends Controller
         if (!$field instanceof CloudflareVideoStreamField) {
             return $this->asJson(['success' => false, 'message' => 'Field is not a Cloudflare Video Stream field.']);
         }
+
+        // Push delete job to queue
         $deleteJob = new DeleteVideoJob([
             'fieldHandle' => $fieldHandle,
             'elementId' => $elementId,
             'videoUid' => $videoUid,
+            'validateElementIsDeleted' => false,
         ]);
         \Craft::$app->getQueue()->push($deleteJob);
+
+        // Update element
         $element->setFieldValue($fieldHandle, null);
         // element, runValidation, propagate, updateIndex
         if (!\Craft::$app->getElements()->saveElement($element, true, true, false)) {
             return $this->asJson(['success' => false, 'message' => 'Failed to save asset.']);
         }
-        \Craft::$app->getSession()->setNotice(\Craft::t('cloudflare-stream', 'Video removed from Cloudflare Stream successfully'));
+
+        // Success
+        \Craft::$app->getSession()->setNotice(
+            \Craft::t('cloudflare-stream', 'Video successfully scheduled to be removed from Cloudflare Stream')
+        );
 
         return $this->asJson(['success' => true]);
     }
