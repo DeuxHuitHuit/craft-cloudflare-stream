@@ -1,7 +1,7 @@
 <div style="max-height: 100%;display: flex;flex-shrink: 1;">
 {% if value.readyToStream %}
 	<video autoplay muted controls style="width: 100%; object-fit: contain;" width="{{ value.input.width }}" height="{{ value.input.height }}" poster="{{ value.thumbnail }}">
-		{% if value.mp4Url %}
+		{% if value.mp4Url and completed %}
 			<source src="{{ value.mp4Url }}" type="video/mp4">
 		{% endif %}
 		{% if value.playback.hls %}

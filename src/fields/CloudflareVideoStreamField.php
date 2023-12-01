@@ -90,6 +90,9 @@ class CloudflareVideoStreamField extends Field
             'actionUrl' => UrlHelper::actionUrl('cloudflare-stream/delete/delete'),
             'element' => $element,
             'value' => $value,
+            // This is to maintain compatibility with pre 1.4.5 versions:
+            // If the completed key is not set, we assume it's true
+            'completed' => !isset($value['completed']) || $value['completed'],
         ]);
     }
 

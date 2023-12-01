@@ -28,7 +28,7 @@ craft plugin/install cloudflare-stream
 ```twig
 {% set value = asset.stream %}
 <video controls style="width: 100%" poster="{{ value.thumbnail }}">
-    {% if value.mp4Url %}
+    {% if value.mp4Url and value.completed %}
         <source src="{{ value.mp4Url }}" type="video/mp4">
     {% endif %}
     {% if value.playback.hls %}
@@ -60,6 +60,8 @@ query MyQuery {
         hls
         dash
         mp4
+        ready
+        completed
         watermark {
           uid
           created

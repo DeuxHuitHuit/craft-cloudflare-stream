@@ -74,6 +74,32 @@ class CloudflareVideoStreamType extends ObjectType
                         return strval($value['mp4Url']);
                     },
                 ],
+                'ready' => [
+                    'name' => 'ready',
+                    'type' => Type::boolean(),
+                    'description' => 'Whether the video is ready to be streamed.',
+                    'resolve' => function ($value) {
+                        if (!isset($value['readyToStream'])) {
+                            return false;
+                        }
+
+                        return boolval($value['readyToStream']);
+                    },
+                ],
+                'completed' => [
+                    'name' => 'completed',
+                    'type' => Type::boolean(),
+                    'description' => 'Whether the video is ready to be downloaded.',
+                    'resolve' => function ($value) {
+                        if (!isset($value['completed'])) {
+                            // This is to maintain compatibility with pre 1.4.5 versions:
+                            // If the completed key is not set, we assume it's true
+                            return true;
+                        }
+
+                        return boolval($value['completed']);
+                    },
+                ],
                 'input' => [
                     'name' => 'input',
                     'resolve' => function ($value) {
