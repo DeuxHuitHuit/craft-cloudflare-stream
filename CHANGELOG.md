@@ -1,5 +1,12 @@
 # Change log
 
+## 1.4.5 - 2023-12-04
+
+* f25ee33c80 (fix) Add warning outside of the details
+* baee3048ca (fix) Make sure we compare with a float
+* e9ab621cae (fix) Make sure removing from CF works: Fix the regression from 1.4.3.
+* 07b515c0a4 (fix) Poll the video until the process is complete: Fixes issues with mp4 urls.
+
 ## 1.4.4 - 2023-11-15
 
 * 87ce93d209 Trim trailing / on video path
