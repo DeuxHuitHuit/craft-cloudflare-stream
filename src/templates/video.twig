@@ -10,6 +10,14 @@
 			<source src="{{ value.playback.dash }}" type="application/dash+xml">
 		{% endif %}
 	</video>
+	{% if not completed %}
+		<p>
+			The video is still processing. This can take a few minutes.
+		</p>
+		<p>
+			Status: {{ value.status.state }} {{ value.status.pctComplete|default(1) }}%
+		</p>
+	{% endif %}
 </div>
 <details style="margin: 1em 0;">
 	<summary>{{ value.meta.name }} <small>({{ value.input.width }} x {{ value.input.height }}, {{ value.duration }}s)</small></summary>
