@@ -70,7 +70,7 @@ class PollVideoJob extends BaseJob
         $hasMp4Url = isset($this->mp4Url) && !empty($this->mp4Url);
         $this->completed = $ready &&
             isset($result['status']['pctComplete']) &&
-            \floatval($result['status']['pctComplete']) === 100;
+            \floatval($result['status']['pctComplete']) === 100.0;
 
         // If the video is ready, request the creation of a download / mp4 url if not already done
         if ($ready && !$hasMp4Url) {
