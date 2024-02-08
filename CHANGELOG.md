@@ -1,5 +1,9 @@
 # Change log
 
+## 1.4.6 - 2024-02-08
+
+* d0ab33081a (chore) Add php 8.3 support
+
 ## 1.4.5 - 2023-12-04
 
 * f25ee33c80 (fix) Add warning outside of the details
