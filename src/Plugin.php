@@ -90,6 +90,7 @@ class Plugin extends \craft\base\Plugin
             'videoUrl' => $asset->getUrl(),
             'videoName' => $asset->filename,
             'videoPath' => \deuxhuithuit\cfstream\Folder::getAssetFolderPath($asset),
+            'videoTitle' => $asset->title,
         ]);
         \Craft::$app->getQueue()->push($uploadJob);
     }

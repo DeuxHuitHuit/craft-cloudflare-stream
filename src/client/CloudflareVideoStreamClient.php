@@ -32,12 +32,18 @@ class CloudflareVideoStreamClient
         ];
     }
 
-    public function uploadVideoByUrl(string $videoUrl, string $videoName)
+    public function uploadVideoByUrl(string $videoUrl, string $videoName, string $videoTitle = null)
     {
         $client = new GuzzleHttp\Client();
         $uploadRes = $client->request('POST', $this->createCfUrl('/stream/copy'), [
             'headers' => $this->createHttpHeaders(),
-            'body' => json_encode(['url' => $videoUrl, 'meta' => ['name' => $videoName]]),
+            'body' => json_encode([
+                'url' => $videoUrl,
+                'meta' => [
+                    'name' => $videoName,
+                    'title' => $videoTitle,
+                ]
+            ]),
             'http_errors' => false,
         ]);
 

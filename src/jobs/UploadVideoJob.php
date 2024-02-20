@@ -15,6 +15,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
     public $videoUrl;
     public $videoName;
     public $videoPath;
+    public $videoTitle;
 
     public function getTtr()
     {
@@ -63,10 +64,10 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         $result = null;
         if ($settings->isUsingFormUpload()) {
             \Craft::info('Uploading video by path', __METHOD__);
-            $result = $client->uploadVideoByPath($this->videoPath, basename($this->videoUrl));
+            $result = $client->uploadVideoByPath($this->videoPath, $this->videoName);
         } else {
             \Craft::info('Uploading video by url', __METHOD__);
-            $result = $client->uploadVideoByUrl($this->videoUrl, $this->videoName);
+            $result = $client->uploadVideoByUrl($this->videoUrl, $this->videoName, $this->videoTitle);
         }
 
         $this->setProgress($queue, 0.3, 'Uploading request returned');
