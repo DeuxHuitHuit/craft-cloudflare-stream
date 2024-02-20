@@ -1,5 +1,9 @@
 # Change log
 
+## 1.4.7 - 2024-02-20
+
+* 98b8919381 (fix) Make sure videoName is always the filename
+
 ## 1.4.6 - 2024-02-08
 
 * d0ab33081a (chore) Add php 8.3 support
