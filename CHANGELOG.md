@@ -1,5 +1,9 @@
 # Change log
 
+## 1.4.8 - 2024-03-28
+
+* 32271b8440 (fix) Make sure variables are defined
+
 ## 1.4.7 - 2024-02-20
 
 * 98b8919381 (fix) Make sure videoName is always the filename
