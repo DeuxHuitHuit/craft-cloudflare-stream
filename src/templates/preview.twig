@@ -1,7 +1,7 @@
 <div style="max-height: 100%;display: flex;flex-shrink: 1;">
-{% if value.readyToStream %}
+{% if value and value.readyToStream %}
 	<video autoplay muted controls style="width: 100%; object-fit: contain;" width="{{ value.input.width }}" height="{{ value.input.height }}" poster="{{ value.thumbnail }}">
-		{% if value.mp4Url and completed %}
+		{% if value.mp4Url and value.completed %}
 			<source src="{{ value.mp4Url }}" type="video/mp4">
 		{% endif %}
 		{% if value.playback.hls %}
@@ -11,7 +11,10 @@
 			<source src="{{ value.playback.dash }}" type="application/dash+xml">
 		{% endif %}
 	</video>
-{% elseif value.thumbnail %}
+	{% if not value.completed %}
+		<p>Video is still processing...</p>
+	{% endif %}
+{% elseif value and value.thumbnail is defined and value.thumbnail %}
 	<img src="{{ value.thumbnail }}" style="width: 100%; object-fit: contain;">
 {% else %}
 	<p>Not ready to stream</p>
