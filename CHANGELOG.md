@@ -1,5 +1,11 @@
 # Change log
 
+We try to maintain a complete change log, based on what is available in git.
+
+## 1.5.0 - 2024-06-05
+
+* 4f1592f408 (feat) Add the ability to control the thumbnail
+
 ## 1.4.8 - 2024-03-28
 
 * 32271b8440 (fix) Make sure variables are defined
