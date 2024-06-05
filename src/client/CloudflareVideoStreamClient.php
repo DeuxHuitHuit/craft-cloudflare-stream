@@ -140,4 +140,25 @@ class CloudflareVideoStreamClient
             'success' => true,
         ];
     }
+
+    public function updateThumbnail(string $videoUid, float $time, float $duration)
+    {
+        $client = new GuzzleHttp\Client();
+        $res = $client->request('POST', $this->createCfUrl('/stream/' . $videoUid), [
+            'headers' => $this->createHttpHeaders(),
+            'json' => [
+                'thumbnailTimestampPct' => $time / $duration
+            ],
+            'http_errors' => false,
+        ]);
+        if ($res->getStatusCode() !== 200) {
+            return [
+                'error' => 'Error updating thumbnail',
+                'message' => $res->getBody(),
+            ];
+        }
+        return [
+            'success' => true,
+        ];
+    }
 }

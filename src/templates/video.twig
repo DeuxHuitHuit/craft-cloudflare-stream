@@ -1,5 +1,5 @@
-<div>
-	<video controls style="width: 100%" poster="{{ value.thumbnail }}">
+<div class="cfstream-ctx">
+	<video class="cfstream-video" controls style="width: 100%" poster="{{ value.thumbnail }}">
 		{% if value.mp4Url and completed %}
 			<source src="{{ value.mp4Url }}" type="video/mp4">
 		{% endif %}
@@ -17,6 +17,14 @@
 		<p>
 			Status: {{ value.status.state }} {{ value.status.pctComplete|default(1) }}%
 		</p>
+	{% elseif value.mp4Url %}
+		<fieldset>
+			<legend>Video options</legend>
+
+			<button type="button" class="btn cfstream-action cfstream-action-thumbnail" data-video-uid={{ value.uid }} data-field-handle={{ name }} data-element-id={{ element.id }} data-action-url="{{ updateThumbActionUrl }}">
+				Update thumbnail to use the current frame
+			</button>
+		</fieldset>
 	{% endif %}
 </div>
 <details style="margin: 1em 0;">
@@ -36,7 +44,7 @@
 		<div style="margin: 1em 0;">
 			<textarea readonly style="width:100%" rows="6">{{ value|json_encode(constant('JSON_PRETTY_PRINT')) }}</textarea>
 		</div>
-		<button type="button" class="btn submit cfstream-action" data-video-uid={{ value.uid }} data-field-handle={{ name }} data-element-id={{ element.id }} data-action-url="{{ actionUrl }}">
+		<button type="button" class="btn submit cfstream-action cfstream-action-delete" data-video-uid={{ value.uid }} data-field-handle={{ name }} data-element-id={{ element.id }} data-action-url="{{ deleteActionUrl }}">
 			Delete from Cloudflare
 		</button>
 	</div>

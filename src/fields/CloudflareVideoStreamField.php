@@ -87,7 +87,8 @@ class CloudflareVideoStreamField extends Field
         // Ready to stream
         return \Craft::$app->getView()->renderTemplate('cloudflare-stream/video', [
             'name' => $this->handle,
-            'actionUrl' => UrlHelper::actionUrl('cloudflare-stream/delete/delete'),
+            'deleteActionUrl' => UrlHelper::actionUrl('cloudflare-stream/delete/delete'),
+            'updateThumbActionUrl' => UrlHelper::actionUrl('cloudflare-stream/thumb/update'),
             'element' => $element,
             'value' => $value,
             // This is to maintain compatibility with pre 1.4.5 versions:
