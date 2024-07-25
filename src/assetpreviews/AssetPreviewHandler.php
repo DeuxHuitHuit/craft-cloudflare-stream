@@ -2,15 +2,18 @@
 
 namespace deuxhuithuit\cfstream\assetpreviews;
 
-class AssetPreviewHandler implements \craft\base\AssetPreviewHandlerInterface
+use craft\base\AssetPreviewHandlerInterface;
+use craft\elements\Asset;
+
+class AssetPreviewHandler implements AssetPreviewHandlerInterface
 {
-    /** @var \craft\elements\Asset */
+    /** @var Asset */
     private $asset;
 
     /** @var array */
     private $fieldData;
 
-    public function __construct(\craft\elements\Asset $asset, array $fieldData)
+    public function __construct(Asset $asset, array $fieldData)
     {
         $this->asset = $asset;
         $this->fieldData = $fieldData;

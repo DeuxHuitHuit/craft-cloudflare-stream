@@ -2,16 +2,24 @@
 
 namespace deuxhuithuit\cfstream;
 
+use craft\base\Element;
+use craft\base\Model;
 use craft\console\Controller;
+use craft\elements\Asset;
+use craft\events\AssetPreviewEvent;
+use craft\events\DefineAssetThumbUrlEvent;
 use craft\events\DefineConsoleActionsEvent;
+use craft\events\ModelEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterTemplateRootsEvent;
+use craft\services\Assets;
 use craft\services\Fields;
 use craft\web\View;
 use deuxhuithuit\cfstream\controllers\ReuploadController;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 use deuxhuithuit\cfstream\jobs\DeleteVideoJob;
 use deuxhuithuit\cfstream\jobs\UploadVideoJob;
+use deuxhuithuit\cfstream\models\Settings;
 use yii\base\Event;
 
 class Plugin extends \craft\base\Plugin
@@ -38,9 +46,9 @@ class Plugin extends \craft\base\Plugin
         parent::__construct($id, $parent, $config);
     }
 
-    public function beforeAutoUpload(\craft\events\ModelEvent $event)
+    public function beforeAutoUpload(ModelEvent $event)
     {
-        /** @var \craft\elements\Asset $asset */
+        /** @var Asset $asset */
         $asset = $event->sender;
         if (!$this->isNewVideoAsset($asset)) {
             return;
@@ -62,9 +70,9 @@ class Plugin extends \craft\base\Plugin
         $asset->setFieldValue($streamField->handle, ['readyToStream' => false]);
     }
 
-    public function autoUpload(\craft\events\ModelEvent $event)
+    public function autoUpload(ModelEvent $event)
     {
-        /** @var \craft\elements\Asset $asset */
+        /** @var Asset $asset */
         $asset = $event->sender;
         if (!$this->isNewVideoAsset($asset)) {
             return;
@@ -89,15 +97,15 @@ class Plugin extends \craft\base\Plugin
             'elementId' => $asset->id,
             'videoUrl' => $asset->getUrl(),
             'videoName' => $asset->filename,
-            'videoPath' => \deuxhuithuit\cfstream\Folder::getAssetFolderPath($asset),
+            'videoPath' => Folder::getAssetFolderPath($asset),
             'videoTitle' => $asset->title,
         ]);
         \Craft::$app->getQueue()->push($uploadJob);
     }
 
-    public function autoDelete(\craft\events\ModelEvent $event)
+    public function autoDelete(ModelEvent $event)
     {
-        /** @var \craft\elements\Asset $asset */
+        /** @var Asset $asset */
         $asset = $event->sender;
         if (!$this->isVideoAsset($asset)) {
             return;
@@ -138,8 +146,8 @@ class Plugin extends \craft\base\Plugin
         );
 
         \Craft::$app->getAssets()->on(
-            \craft\services\Assets::EVENT_DEFINE_THUMB_URL,
-            function (\craft\events\DefineAssetThumbUrlEvent $event) {
+            Assets::EVENT_DEFINE_THUMB_URL,
+            function (DefineAssetThumbUrlEvent $event) {
                 if (!$this->isVideoAsset($event->asset)) {
                     return;
                 }
@@ -160,8 +168,8 @@ class Plugin extends \craft\base\Plugin
         );
 
         \Craft::$app->getAssets()->on(
-            \craft\services\Assets::EVENT_REGISTER_PREVIEW_HANDLER,
-            function (\craft\events\AssetPreviewEvent $event) {
+            Assets::EVENT_REGISTER_PREVIEW_HANDLER,
+            function (AssetPreviewEvent $event) {
                 if (!$this->isVideoAsset($event->asset)) {
                     return;
                 }
@@ -182,26 +190,26 @@ class Plugin extends \craft\base\Plugin
         );
 
         Event::on(
-            \craft\elements\Asset::class,
-            \craft\base\Element::EVENT_BEFORE_SAVE,
+            Asset::class,
+            Element::EVENT_BEFORE_SAVE,
             [$this, 'beforeAutoUpload']
         );
 
         Event::on(
-            \craft\elements\Asset::class,
-            \craft\base\Element::EVENT_AFTER_SAVE,
+            Asset::class,
+            Element::EVENT_AFTER_SAVE,
             [$this, 'autoUpload']
         );
 
         Event::on(
-            \craft\elements\Asset::class,
-            \craft\base\Element::EVENT_BEFORE_RESTORE,
+            Asset::class,
+            Element::EVENT_BEFORE_RESTORE,
             [$this, 'autoUpload']
         );
 
         Event::on(
-            \craft\elements\Asset::class,
-            \craft\base\Element::EVENT_BEFORE_DELETE,
+            Asset::class,
+            Element::EVENT_BEFORE_DELETE,
             [$this, 'autoDelete']
         );
 
@@ -225,9 +233,9 @@ class Plugin extends \craft\base\Plugin
         parent::init();
     }
 
-    protected function createSettingsModel(): ?\craft\base\Model
+    protected function createSettingsModel(): ?Model
     {
-        return new \deuxhuithuit\cfstream\models\Settings();
+        return new Settings();
     }
 
     protected function settingsHtml(): ?string
@@ -240,33 +248,33 @@ class Plugin extends \craft\base\Plugin
 
     private function isAutoUploadEnabled(): bool
     {
-        /** @var \deuxhuithuit\cfstream\models\Settings $settings */
+        /** @var Settings $settings */
         $settings = $this->getSettings();
 
         return $settings->isAutoUpload();
     }
 
-    private function isVideoAsset(?\craft\elements\Asset $asset): bool
+    private function isVideoAsset(?Asset $asset): bool
     {
         if (!$asset) {
             return false;
         }
 
-        return $asset->kind === \craft\elements\Asset::KIND_VIDEO;
+        return $asset->kind === Asset::KIND_VIDEO;
     }
 
-    private function isNewVideoAsset(?\craft\elements\Asset $asset): bool
+    private function isNewVideoAsset(?Asset $asset): bool
     {
         return $this->isVideoAsset($asset)
-            && $asset->getScenario() === \craft\elements\Asset::SCENARIO_CREATE;
+            && $asset->getScenario() === Asset::SCENARIO_CREATE;
     }
 
-    private function isNewValidEvent(\craft\events\ModelEvent $event): bool
+    private function isNewValidEvent(ModelEvent $event): bool
     {
         return $event->isNew && $event->isValid;
     }
 
-    private function findStreamingField(\craft\elements\Asset $asset): ?CloudflareVideoStreamField
+    private function findStreamingField(Asset $asset): ?CloudflareVideoStreamField
     {
         $fields = $asset->getFieldLayout()->getCustomFields();
 

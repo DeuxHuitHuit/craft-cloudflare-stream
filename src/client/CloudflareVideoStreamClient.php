@@ -2,6 +2,7 @@
 
 namespace deuxhuithuit\cfstream\client;
 
+use deuxhuithuit\cfstream\models\Settings;
 use GuzzleHttp;
 
 class CloudflareVideoStreamClient
@@ -9,7 +10,7 @@ class CloudflareVideoStreamClient
     public $baseUrl = 'https://api.cloudflare.com/client/v4/accounts/';
     public $config;
 
-    public function __construct(\deuxhuithuit\cfstream\models\Settings $config)
+    public function __construct(Settings $config)
     {
         if (!$config->getApiToken()) {
             throw new \Exception('No API token found');
@@ -32,7 +33,7 @@ class CloudflareVideoStreamClient
         ];
     }
 
-    public function uploadVideoByUrl(string $videoUrl, string $videoName, string $videoTitle = null)
+    public function uploadVideoByUrl(string $videoUrl, string $videoName, ?string $videoTitle = null)
     {
         $client = new GuzzleHttp\Client();
         $uploadRes = $client->request('POST', $this->createCfUrl('/stream/copy'), [
@@ -42,7 +43,7 @@ class CloudflareVideoStreamClient
                 'meta' => [
                     'name' => $videoName,
                     'title' => $videoTitle,
-                ]
+                ],
             ]),
             'http_errors' => false,
         ]);
@@ -68,7 +69,7 @@ class CloudflareVideoStreamClient
         if (!$file) {
             return [
                 'error' => 'Error opening video file',
-                'message' => "File '$fullPath' not found",
+                'message' => "File '{$fullPath}' not found",
             ];
         }
         $uploadRes = $client->request('POST', $this->createCfUrl('/stream'), [
@@ -136,6 +137,7 @@ class CloudflareVideoStreamClient
                 'message' => $res->getBody(),
             ];
         }
+
         return [
             'success' => true,
         ];
@@ -147,7 +149,7 @@ class CloudflareVideoStreamClient
         $res = $client->request('POST', $this->createCfUrl('/stream/' . $videoUid), [
             'headers' => $this->createHttpHeaders(),
             'json' => [
-                'thumbnailTimestampPct' => $time / $duration
+                'thumbnailTimestampPct' => $time / $duration,
             ],
             'http_errors' => false,
         ]);
@@ -157,6 +159,7 @@ class CloudflareVideoStreamClient
                 'message' => $res->getBody(),
             ];
         }
+
         return [
             'success' => true,
         ];

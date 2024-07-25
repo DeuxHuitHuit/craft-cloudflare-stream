@@ -2,8 +2,10 @@
 
 namespace deuxhuithuit\cfstream\controllers;
 
+use craft\elements\Asset;
 use craft\web\Controller;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
+use deuxhuithuit\cfstream\Folder;
 use deuxhuithuit\cfstream\jobs\UploadVideoJob;
 
 class UploadController extends Controller
@@ -27,7 +29,8 @@ class UploadController extends Controller
         $element = \Craft::$app->getElements()->getElementById($elementId);
         if (!$element) {
             return $this->asJson(['success' => false, 'message' => 'Element not found.']);
-        } elseif (!($element instanceof \craft\elements\Asset)) {
+        }
+        if (!$element instanceof Asset) {
             return $this->asJson(['success' => false, 'message' => 'Element not an asset.']);
         }
 
@@ -38,7 +41,8 @@ class UploadController extends Controller
         $field = \Craft::$app->getFields()->getFieldByHandle($fieldHandle);
         if (!$field) {
             return $this->asJson(['success' => false, 'message' => 'Field not found.']);
-        } elseif (!($field instanceof CloudflareVideoStreamField)) {
+        }
+        if (!$field instanceof CloudflareVideoStreamField) {
             return $this->asJson(['success' => false, 'message' => 'Field is not a Cloudflare Video Stream field.']);
         }
 
@@ -55,7 +59,7 @@ class UploadController extends Controller
             'elementId' => $elementId,
             'videoUrl' => $element->getUrl(),
             'videoName' => $element->filename,
-            'videoPath' => \deuxhuithuit\cfstream\Folder::getAssetFolderPath($element),
+            'videoPath' => Folder::getAssetFolderPath($element),
             'videoTitle' => $element->title,
         ]);
         \Craft::$app->getQueue()->push($uploadJob);
