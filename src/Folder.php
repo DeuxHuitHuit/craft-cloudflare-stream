@@ -14,7 +14,7 @@ class Folder
         $path = '';
         
         if (property_exists($fs, 'rootPath')) {
-            $path = $asset->getVolume()->getFs()->rootPath;
+            $path = $fs->rootPath;
         }
         
         $folderPath = $asset->getFolder()->path;
