@@ -2,6 +2,13 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 2.0.0 - 2024-08-13
+
+This is a breaking change since v2 only support Craft 5.
+
+* a03694fc13 (fix) Check for rootPath property (#8, thanks @curtishenson)
+* de79933d08 (bc) Move to Craft 5 (#10)
+
 ## 1.5.0 - 2024-06-05
 
 * 4f1592f408 (feat) Add the ability to control the thumbnail
