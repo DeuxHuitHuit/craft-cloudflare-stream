@@ -6,9 +6,11 @@ use craft\queue\BaseJob;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 use deuxhuithuit\cfstream\models\Settings;
+use deuxhuithuit\cfstream\Plugin;
+use yii\queue\RetryableJobInterface;
 
 // TODO: Make cancellable, to cancel the upload if the asset is deleted
-class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
+class UploadVideoJob extends BaseJob implements RetryableJobInterface
 {
     public $fieldHandle;
     public $elementId;
@@ -36,6 +38,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         if (!$element) {
             // Ignore deleted entries
             $this->setProgress($queue, 1, 'Element not found');
+
             return;
         }
 
@@ -44,6 +47,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         if (!$field) {
             // Ignore deleted fields
             $this->setProgress($queue, 1, 'Field not found');
+
             return;
         }
 
@@ -59,7 +63,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
         $this->setProgress($queue, 0.2, 'Uploading video to Cloudflare Stream');
 
         /** @var Settings */
-        $settings = \deuxhuithuit\cfstream\Plugin::getInstance()->getSettings();
+        $settings = Plugin::getInstance()->getSettings();
         $client = new CloudflareVideoStreamClient($settings);
         $result = null;
         if ($settings->isUsingFormUpload()) {
@@ -77,7 +81,8 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
             \Craft::error('Upload request failed.', __METHOD__);
 
             throw new \Error('Upload request failed');
-        } elseif (!empty($result['error'])) {
+        }
+        if (!empty($result['error'])) {
             $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error']);
             \Craft::error('Upload request failed.' . $result['error'] . ' ' . $result['message'], __METHOD__);
 
@@ -91,6 +96,7 @@ class UploadVideoJob extends BaseJob implements \yii\queue\RetryableJobInterface
             $this->setProgress($queue, 1, 'ERROR: Could not save element');
 
             \Craft::error('Could not save element');
+
             throw new \Error('Could not save element');
         }
         $this->setProgress($queue, 0.5, 'Craft element saved');

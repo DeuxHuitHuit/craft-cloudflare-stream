@@ -5,6 +5,7 @@ namespace deuxhuithuit\cfstream\jobs;
 use craft\queue\BaseJob;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
+use deuxhuithuit\cfstream\Plugin;
 
 class PollVideoJob extends BaseJob
 {
@@ -61,16 +62,16 @@ class PollVideoJob extends BaseJob
         $this->setProgress($queue, 0.2, 'Sending poll request to Cloudflare Stream');
 
         ++$this->attempts;
-        $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->getSettings());
+        $client = new CloudflareVideoStreamClient(Plugin::getInstance()->getSettings());
         $result = $client->getVideo($this->videoUid);
 
         $this->setProgress($queue, 0.3, 'Poll request returned');
 
         $ready = $result ? $result['readyToStream'] : false;
         $hasMp4Url = isset($this->mp4Url) && !empty($this->mp4Url);
-        $this->completed = $ready &&
-            isset($result['status']['pctComplete']) &&
-            \floatval($result['status']['pctComplete']) === 100.0;
+        $this->completed = $ready
+            && isset($result['status']['pctComplete'])
+            && \floatval($result['status']['pctComplete']) === 100.0;
 
         // If the video is ready, request the creation of a download / mp4 url if not already done
         if ($ready && !$hasMp4Url) {

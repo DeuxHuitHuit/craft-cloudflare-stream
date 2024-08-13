@@ -5,6 +5,7 @@ namespace deuxhuithuit\cfstream\controllers;
 use craft\web\Controller;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
+use deuxhuithuit\cfstream\Plugin;
 
 class ThumbController extends Controller
 {
@@ -56,7 +57,7 @@ class ThumbController extends Controller
             return $this->asJson(['success' => false, 'message' => 'Duration must be a positive number.']);
         }
 
-        $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->settings);
+        $client = new CloudflareVideoStreamClient(Plugin::getInstance()->settings);
         $response = $client->updateThumbnail($videoUid, $time, $duration);
 
         if (isset($response['error'])) {

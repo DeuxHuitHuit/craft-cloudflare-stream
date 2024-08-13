@@ -4,12 +4,14 @@ namespace deuxhuithuit\cfstream\fields;
 
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\elements\Asset;
 use craft\gql\GqlEntityRegistry;
 use craft\gql\TypeLoader;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
 use deuxhuithuit\cfstream\assetbundles\CloudflareVideoStreamAssetBundle;
 use deuxhuithuit\cfstream\graphql\types\CloudflareVideoStreamType;
+use deuxhuithuit\cfstream\models\Settings;
 use deuxhuithuit\cfstream\Plugin;
 use GraphQL\Type\Definition\Type;
 use yii\db\Schema;
@@ -26,26 +28,26 @@ class CloudflareVideoStreamField extends Field
         return Schema::TYPE_TEXT;
     }
 
-    public function normalizeValue(mixed $value, ElementInterface $element = null): mixed
+    public function normalizeValue(mixed $value, ?ElementInterface $element = null): mixed
     {
         return Json::decodeIfJson($value);
     }
 
-    public function serializeValue(mixed $value, ElementInterface $element = null): mixed
+    public function serializeValue(mixed $value, ?ElementInterface $element = null): mixed
     {
         return Json::encode($value);
     }
 
-    public function getInputHtml($value, ElementInterface $element = null): string
+    public function getInputHtml($value, ?ElementInterface $element = null): string
     {
         \Craft::$app->getView()->registerAssetBundle(CloudflareVideoStreamAssetBundle::class);
 
         // Make sure it's a video
-        if (!$element || $element->kind !== \craft\elements\Asset::KIND_VIDEO) {
+        if (!$element || $element->kind !== Asset::KIND_VIDEO) {
             return \Craft::$app->getView()->renderTemplate('cloudflare-stream/not-a-video');
         }
 
-        /** @var \deuxhuithuit\cfstream\models\Settings */
+        /** @var Settings */
         $settings = Plugin::getInstance()->getSettings();
 
         // Validate settings

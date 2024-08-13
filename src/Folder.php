@@ -2,11 +2,14 @@
 
 namespace deuxhuithuit\cfstream;
 
+use craft\elements\Asset;
+
 class Folder
 {
     /**
-     * Returns the full path of the asset's folder
-     * @param \craft\elements\Asset $asset
+     * Returns the full path of the asset's folder.
+     *
+     * @param Asset $asset
      */
     public static function getAssetFolderPath($asset): string
     {
@@ -15,6 +18,7 @@ class Folder
         if ($folderPath) {
             $path .= '/' . $folderPath;
         }
+
         return $path;
     }
 }

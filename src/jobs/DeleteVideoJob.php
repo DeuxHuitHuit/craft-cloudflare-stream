@@ -5,6 +5,7 @@ namespace deuxhuithuit\cfstream\jobs;
 use craft\queue\BaseJob;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
+use deuxhuithuit\cfstream\Plugin;
 
 class DeleteVideoJob extends BaseJob
 {
@@ -35,6 +36,7 @@ class DeleteVideoJob extends BaseJob
         if (!$field) {
             // Ignore deleted fields
             $this->setProgress($queue, 1, 'Field not found');
+
             return;
         }
 
@@ -49,7 +51,7 @@ class DeleteVideoJob extends BaseJob
 
         $this->setProgress($queue, 0.2, 'Sending delete request to Cloudflare Stream');
 
-        $client = new CloudflareVideoStreamClient(\deuxhuithuit\cfstream\Plugin::getInstance()->settings);
+        $client = new CloudflareVideoStreamClient(Plugin::getInstance()->settings);
         $result = $client->deleteVideo($this->videoUid);
 
         $this->setProgress($queue, 0.3, 'Delete request returned');
@@ -59,7 +61,8 @@ class DeleteVideoJob extends BaseJob
             \Craft::error('Delete request failed.', __METHOD__);
 
             throw new \Error('Delete request failed');
-        } elseif (!empty($result['error'])) {
+        }
+        if (!empty($result['error'])) {
             $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error']);
             \Craft::error('Delete request failed.' . $result['error'] . ' ' . $result['message'], __METHOD__);
 
