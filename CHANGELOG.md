@@ -2,6 +2,10 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 1.6.0 - 2024-09-30
+
+* 77dac5a221 (feat) Add TUS support (backport of #14)
+
 ## 1.5.0 - 2024-06-05
 
 * 4f1592f408 (feat) Add the ability to control the thumbnail
