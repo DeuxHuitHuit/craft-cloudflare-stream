@@ -22,7 +22,7 @@ class Folder
             $path = App::parseEnv($fs->path);
         }
         // or start with rootPath, if it exists?
-        else if (property_exists($fs, 'rootPath')) {
+        elseif (property_exists($fs, 'rootPath')) {
             $path = $fs->rootPath;
         }
 
