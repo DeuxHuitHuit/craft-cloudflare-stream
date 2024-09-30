@@ -8,7 +8,6 @@ use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 use deuxhuithuit\cfstream\models\Settings;
 use deuxhuithuit\cfstream\Plugin;
-use Exception;
 use yii\queue\RetryableJobInterface;
 
 // TODO: Make cancellable, to cancel the upload if the asset is deleted
@@ -42,8 +41,9 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
             $this->setProgress($queue, 1, 'Element not found');
 
             return;
-        } else if (!$element instanceof Asset) {
-            throw new Exception('Element not an asset.');
+        }
+        if (!$element instanceof Asset) {
+            throw new \Exception('Element not an asset.');
         }
 
         // Get the CloudflareVideoStreamField by its handle
@@ -122,7 +122,7 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
             ]);
             \Craft::$app->getQueue()->push($pollingJob);
             $this->setProgress($queue, 0.7, 'Polling job pushed');
-        } else if ($jobType == 'tus') {
+        } elseif ($jobType == 'tus') {
             $this->setProgress($queue, 0.6, 'Pushing TUS job');
             $tusJob = new TusUploadVideoJob([
                 'elementId' => $this->elementId,

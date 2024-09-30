@@ -3,18 +3,18 @@
 namespace deuxhuithuit\cfstream\jobs;
 
 use craft\elements\Asset;
+use Craft\helpers\App;
 use craft\queue\BaseJob;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
-use Exception;
 use GuzzleHttp;
 use yii\queue\RetryableJobInterface;
 
 // TODO: Make cancellable, to cancel the upload if the asset is deleted
 class TusUploadVideoJob extends BaseJob implements RetryableJobInterface
 {
-    const DEFAULT_CHUNK_SIZE = 1024 * 1024 * 50; // 50MB
-    const MINIMUM_CHUNK_SIZE = 1024 * 1024 * 5; // 5MB
-    const MAXIMUM_CHUNK_SIZE = 1024 * 1024 * 200; // 200MB
+    public const DEFAULT_CHUNK_SIZE = 1024 * 1024 * 50; // 50MB
+    public const MINIMUM_CHUNK_SIZE = 1024 * 1024 * 5; // 5MB
+    public const MAXIMUM_CHUNK_SIZE = 1024 * 1024 * 200; // 200MB
 
     public $elementId;
     public $fieldHandle;
@@ -30,7 +30,7 @@ class TusUploadVideoJob extends BaseJob implements RetryableJobInterface
         parent::__construct($config);
 
         // Check for env chunk size
-        $envChunkSize = (int) \Craft\helpers\App::env('CF_STREAM_TUS_CHUNK_SIZE');
+        $envChunkSize = (int) App::env('CF_STREAM_TUS_CHUNK_SIZE');
         if ($envChunkSize) {
             $this->chunkSize = $envChunkSize;
         }
@@ -50,11 +50,6 @@ class TusUploadVideoJob extends BaseJob implements RetryableJobInterface
         return $attempt < 1000;
     }
 
-    protected function defaultDescription(): ?string
-    {
-        return "TUS upload video {$this->videoName}, offset {$this->offset}.";
-    }
-
     public function execute($queue): void
     {
         $this->setProgress($queue, 0, 'Validating job data');
@@ -66,8 +61,9 @@ class TusUploadVideoJob extends BaseJob implements RetryableJobInterface
             $this->setProgress($queue, 1, 'Element not found');
 
             return;
-        } else if (!$element instanceof Asset) {
-            throw new Exception('Element not an asset.');
+        }
+        if (!$element instanceof Asset) {
+            throw new \Exception('Element not an asset.');
         }
 
         // Get the CloudflareVideoStreamField by its handle
@@ -101,7 +97,7 @@ class TusUploadVideoJob extends BaseJob implements RetryableJobInterface
         $headHeaders = $headRes->getHeaders();
         if ($headRes->getStatusCode() === 200) {
             if (!isset($headHeaders['upload-offset'][0])) {
-                throw new Exception('Missing upload-offset header');
+                throw new \Exception('Missing upload-offset header');
             }
             $this->offset = (int) $headHeaders['upload-offset'][0];
         }
@@ -110,21 +106,24 @@ class TusUploadVideoJob extends BaseJob implements RetryableJobInterface
         $this->setProgress($queue, 0.3, 'Uploading video to Cloudflare Stream via TUS');
         $file = \fopen($this->videoPath, 'r');
         if (!$file) {
-            throw new Exception('Failed to open file for reading');
+            throw new \Exception('Failed to open file for reading');
         }
 
         $fileSize = \filesize($this->videoPath);
         if (!$fileSize) {
-            throw new Exception('Failed to get file size');
-        } else if ($fileSize < $this->offset) {
-            throw new Exception('File size is smaller than the current offset');
-        } else if ($fileSize === $this->offset) {
+            throw new \Exception('Failed to get file size');
+        }
+        if ($fileSize < $this->offset) {
+            throw new \Exception('File size is smaller than the current offset');
+        }
+        if ($fileSize === $this->offset) {
             $this->setProgress($queue, 1, 'Upload complete, starting polling job');
             \Craft::$app->getQueue()->push(new PollVideoJob([
                 'elementId' => $this->elementId,
                 'fieldHandle' => $this->fieldHandle,
                 'videoUid' => $this->videoUid,
             ]));
+
             return;
         }
 
@@ -151,7 +150,12 @@ class TusUploadVideoJob extends BaseJob implements RetryableJobInterface
             \Craft::$app->getQueue()->push($this);
             $this->setProgress($queue, 1, 'Chunk upload completed, pushed next chunk');
         } else {
-            throw new Exception("Chunk at offset {$this->offset} failed, retrying");
+            throw new \Exception("Chunk at offset {$this->offset} failed, retrying");
         }
+    }
+
+    protected function defaultDescription(): ?string
+    {
+        return "TUS upload video {$this->videoName}, offset {$this->offset}.";
     }
 }
