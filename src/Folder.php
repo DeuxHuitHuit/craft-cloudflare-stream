@@ -3,6 +3,7 @@
 namespace deuxhuithuit\cfstream;
 
 use craft\elements\Asset;
+use craft\helpers\App;
 
 class Folder
 {
@@ -15,11 +16,17 @@ class Folder
     {
         $fs = $asset->getVolume()->getFs();
         $path = '';
-        
-        if (property_exists($fs, 'rootPath')) {
+
+        // Start with the volume's path
+        if ($fs->path) {
+            $path = App::parseEnv($fs->path);
+        }
+        // or start with rootPath, if it exists?
+        else if (property_exists($fs, 'rootPath')) {
             $path = $fs->rootPath;
         }
-        
+
+        // Add the asset's folder path
         $folderPath = $asset->getFolder()->path;
         if ($folderPath) {
             $path .= '/' . $folderPath;
