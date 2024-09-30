@@ -62,8 +62,9 @@ class CloudflareVideoStreamClient
     public function uploadVideoByPath(string $videoPath, string $videoFilename)
     {
         $client = new GuzzleHttp\Client();
-        $fullPath = rtrim($videoPath, '/') . '/' . $videoFilename;
-        // Guzzle might close the file for us...
+        $fullPath = $this->createSafeFullPath($videoPath, $videoFilename);
+
+        // Guzzle might? close the file for us...
         $file = fopen($fullPath, 'r');
         if (!$file) {
             return [
@@ -97,6 +98,53 @@ class CloudflareVideoStreamClient
         $data = json_decode($uploadRes->getBody(), true);
 
         return $data['result'];
+    }
+
+    public function uploadVideoByTus(string $videoPath, string $videoFilename)
+    {
+        $client = new GuzzleHttp\Client();
+        $fullPath = $this->createSafeFullPath($videoPath, $videoFilename);
+
+        $file = \file_exists($fullPath);
+        if (!$file) {
+            return [
+                'error' => 'Video file does not exist',
+                'message' => "File '{$fullPath}' not found",
+            ];
+        }
+        $uploadRes = $client->request('POST', $this->createCfUrl('/stream?direct_user=true'), [
+            'headers' => \array_merge($this->createHttpHeaders(), [
+                'Tus-Resumable' => '1.0.0',
+                'Upload-Length' => (string) \filesize($fullPath),
+                'Upload-Metadata' => 'name ' . \base64_encode($videoFilename),
+            ]),
+            'http_errors' => false,
+        ]);
+
+        if ($uploadRes->getStatusCode() !== 201) {
+            return [
+                'error' => 'Error creating TUS request',
+                'message' => $uploadRes->getBody()->getContents(),
+            ];
+        }
+
+        $headers = $uploadRes->getHeaders();
+        $location = $headers['Location'][0];
+        $uid = $headers['stream-media-id'][0];
+
+        if (!$location) {
+            return [
+                'error' => 'Error getting TUS location',
+                'message' => $uploadRes->getBody()->getContents(),
+            ];
+        }
+
+        return [
+            'readyToStream' => false,
+            'uid' => $uid,
+            'location' => $location,
+            'fullPath' => $fullPath,
+        ];
     }
 
     public function getVideo(string $videoUid)
@@ -160,5 +208,10 @@ class CloudflareVideoStreamClient
         return [
             'success' => true,
         ];
+    }
+
+    private function createSafeFullPath(string $videoPath, string $videoFilename)
+    {
+        return rtrim($videoPath, '/') . '/' . $videoFilename;
     }
 }

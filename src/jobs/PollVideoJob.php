@@ -18,7 +18,7 @@ class PollVideoJob extends BaseJob
 
     public function getTtr()
     {
-        return 10 + $this->delay();
+        return 2 + $this->delay();
     }
 
     public function execute($queue): void
@@ -105,7 +105,7 @@ class PollVideoJob extends BaseJob
             $this->setProgress($queue, 0, 'Delayed retry');
             // Retry the job after x * 2 seconds
             $this->lastResult = $result;
-            $queue->delay($this->delay())->push($this);
+            \Craft::$app->getQueue()->delay($this->delay())->push($this);
         } else {
             // We are done !!!
             $this->setProgress($queue, 1, 'Done');
@@ -119,7 +119,7 @@ class PollVideoJob extends BaseJob
 
     private function delay()
     {
-        return $this->attempts * 2;
+        return (int) $this->attempts * 1.5;
     }
 
     private function setFieldValue($element, array $result)
