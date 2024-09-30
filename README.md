@@ -2,7 +2,7 @@
 
 > This plugin offers a easy way to upload your videos assets from Craft CMS to Cloudflare stream.
 
-Installation:
+## Installation
 
 1) Install with composer
 
@@ -16,7 +16,7 @@ composer require deuxhuithuit/craft-cloudflare-stream
 craft plugin/install cloudflare-stream
 ```
 
-3) Add your account id and api token in the settings.
+3) Add your account id and api token in the settings. You can (and should) use env vars.
 
 4) Create a video stream Field and add it to your Asset data model.
 
@@ -85,14 +85,23 @@ query MyQuery {
 }
 ```
 
-8) You can also mass re-upload everything via Craft's cli
+8) You can also mass re-upload everything via Craft's cli. Please note that this creates _news_ streams.
 
 ```sh
 ./craft cloudflare-stream/reupload
 ```
 
 This extension uses Craft's Queue system, so make sure it works properly.
-Please make sure that Craft's max upload limit is also properly set.
+
+## Dealing with large files
+
+Videos can be quite large, which makes uploading them a little trickier.
+Please make sure that Craft's and php's max upload limit are properly set.
+
+If you still want to deal with larger file than what your host allows, 
+you might want to try the [Chunked Upload plugin](https://plugins.craftcms.com/chunked-uploads)
+to bypass your host restrictions. The plugin will use TUS when appropriated. The chunk size can
+be set by setting the `CF_STREAM_TUS_CHUNK_SIZE` env var to a value in bytes, in the 5 to 200 Mb range.
 
 Made with ❤️ in Montréal.
 

@@ -2,11 +2,13 @@
 
 namespace deuxhuithuit\cfstream\jobs;
 
+use craft\elements\Asset;
 use craft\queue\BaseJob;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
 use deuxhuithuit\cfstream\models\Settings;
 use deuxhuithuit\cfstream\Plugin;
+use Exception;
 use yii\queue\RetryableJobInterface;
 
 // TODO: Make cancellable, to cancel the upload if the asset is deleted
@@ -40,6 +42,8 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
             $this->setProgress($queue, 1, 'Element not found');
 
             return;
+        } else if (!$element instanceof Asset) {
+            throw new Exception('Element not an asset.');
         }
 
         // Get the CloudflareVideoStreamField by its handle
@@ -66,9 +70,16 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
         $settings = Plugin::getInstance()->getSettings();
         $client = new CloudflareVideoStreamClient($settings);
         $result = null;
+        $jobType = 'poll';
         if ($settings->isUsingFormUpload()) {
-            \Craft::info('Uploading video by path', __METHOD__);
-            $result = $client->uploadVideoByPath($this->videoPath, $this->videoName);
+            if ($element->size > TusUploadVideoJob::DEFAULT_CHUNK_SIZE) {
+                \Craft::info('Uploading video by TUS', __METHOD__);
+                $jobType = 'tus';
+                $result = $client->uploadVideoByTus($this->videoPath, $this->videoName);
+            } else {
+                \Craft::info('Uploading video by path', __METHOD__);
+                $result = $client->uploadVideoByPath($this->videoPath, $this->videoName);
+            }
         } else {
             \Craft::info('Uploading video by url', __METHOD__);
             $result = $client->uploadVideoByUrl($this->videoUrl, $this->videoName, $this->videoTitle);
@@ -83,7 +94,7 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
             throw new \Error('Upload request failed');
         }
         if (!empty($result['error'])) {
-            $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error']);
+            $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error'] . ': ' . $result['message']);
             \Craft::error('Upload request failed.' . $result['error'] . ' ' . $result['message'], __METHOD__);
 
             throw new \Error($result['error'] . ' ' . $result['message']);
@@ -101,14 +112,29 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
         }
         $this->setProgress($queue, 0.5, 'Craft element saved');
 
-        $this->setProgress($queue, 0.6, 'Pushing polling job');
-        $pollingJob = new PollVideoJob([
-            'elementId' => $this->elementId,
-            'fieldHandle' => $this->fieldHandle,
-            'videoUid' => $result['uid'],
-        ]);
-        \Craft::$app->getQueue()->push($pollingJob);
-        $this->setProgress($queue, 0.7, 'Polling job pushed');
+        // Push next job
+        if ($jobType == 'poll') {
+            $this->setProgress($queue, 0.6, 'Pushing polling job');
+            $pollingJob = new PollVideoJob([
+                'elementId' => $this->elementId,
+                'fieldHandle' => $this->fieldHandle,
+                'videoUid' => $result['uid'],
+            ]);
+            \Craft::$app->getQueue()->push($pollingJob);
+            $this->setProgress($queue, 0.7, 'Polling job pushed');
+        } else if ($jobType == 'tus') {
+            $this->setProgress($queue, 0.6, 'Pushing TUS job');
+            $tusJob = new TusUploadVideoJob([
+                'elementId' => $this->elementId,
+                'fieldHandle' => $this->fieldHandle,
+                'videoUid' => $result['uid'],
+                'videoLocation' => $result['location'],
+                'videoPath' => $result['fullPath'],
+                'videoName' => $this->videoName,
+            ]);
+            \Craft::$app->getQueue()->push($tusJob);
+            $this->setProgress($queue, 0.7, 'TUS job pushed');
+        }
 
         // Log the success
         \Craft::info('Video uploaded to Cloudflare Stream.', __METHOD__);
