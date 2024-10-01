@@ -137,6 +137,7 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
         } else {
             $this->setProgress($queue, 0.6, 'ERROR: Unknown job type');
             \Craft::error('Unknown job type: ' . $jobType, __METHOD__);
+
             throw new \Error('Unknown job type');
         }
 
