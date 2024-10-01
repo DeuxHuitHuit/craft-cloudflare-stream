@@ -134,6 +134,10 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
             ]);
             \Craft::$app->getQueue()->push($tusJob);
             $this->setProgress($queue, 0.7, 'TUS job pushed');
+        } else {
+            $this->setProgress($queue, 0.6, 'ERROR: Unknown job type');
+            \Craft::error('Unknown job type: ' . $jobType, __METHOD__);
+            throw new \Error('Unknown job type');
         }
 
         // Log the success
