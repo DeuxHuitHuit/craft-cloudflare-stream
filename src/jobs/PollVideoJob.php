@@ -104,7 +104,7 @@ class PollVideoJob extends BaseJob
         // We need to if the process is not completed or if we don't still have a mp4 url
         if (!$this->completed || !$hasMp4Url) {
             $this->setProgress($queue, 0, 'Delayed retry');
-            // Retry the job after x * 1.2 seconds
+            // Retry the job after the current progressive delay value
             $this->lastResult = $result;
             \Craft::$app->getQueue()->delay($this->delay())->push($this);
         } else {

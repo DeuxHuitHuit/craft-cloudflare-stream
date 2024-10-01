@@ -17,6 +17,9 @@ craft plugin/install cloudflare-stream
 ```
 
 3) Add your account id and api token in the settings. You can (and should) use env vars.
+Make sure to also choose your upload mechanism. If your volume does not have public urls,
+turn on form data upload. This is the recommended value, but not the default since not all
+hosts allows it.
 
 4) Create a video stream Field and add it to your Asset data model.
 
@@ -85,7 +88,8 @@ query MyQuery {
 }
 ```
 
-8) You can also mass re-upload everything via Craft's cli. Please note that this creates _news_ streams.
+8) You can also mass re-upload everything via Craft's cli. Please note that this creates _new_ streams videos
+and is useful mainly when changing accounts.
 
 ```sh
 ./craft cloudflare-stream/reupload
