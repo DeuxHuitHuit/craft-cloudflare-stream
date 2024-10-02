@@ -2,6 +2,11 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 2.1.0 - 2024-10-02
+
+* 911f086cdf (feat) Add TUS support (#14)
+* d52d1ecdf8 (fix) Use `path` property instead of `rootPath` (#13)
+
 ## 2.0.0 - 2024-08-13
 
 This is a breaking change since v2 only support Craft 5.
