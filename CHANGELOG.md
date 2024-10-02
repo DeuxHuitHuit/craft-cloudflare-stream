@@ -2,6 +2,10 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 1.6.1 - 2024-10-02
+
+* 9a8ca6fc33 (fix) Check for rootPath property (backport of #8)
+
 ## 1.6.0 - 2024-09-30
 
 * 77dac5a221 (feat) Add TUS support (backport of #14)
