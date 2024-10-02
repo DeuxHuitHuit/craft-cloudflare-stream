@@ -10,7 +10,13 @@ class Folder
      */
     public static function getAssetFolderPath($asset): string
     {
-        $path = $asset->getVolume()->getFs()->rootPath;
+        $fs = $asset->getVolume()->getFs();
+        $path = '';
+
+        if (property_exists($fs, 'rootPath')) {
+            $path = $fs->rootPath;
+        }
+
         $folderPath = $asset->getFolder()->path;
         if ($folderPath) {
             $path .= '/' . $folderPath;
