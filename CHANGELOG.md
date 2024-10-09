@@ -2,6 +2,10 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 1.6.2 - 2024-10-09
+
+* c1b6e844ff (fix) Use `path` property instead of `rootPath` (backport of #13)
+
 ## 1.6.1 - 2024-10-02
 
 * 9a8ca6fc33 (fix) Check for rootPath property (backport of #8)
