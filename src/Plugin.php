@@ -60,7 +60,7 @@ class Plugin extends \craft\base\Plugin
             return;
         }
 
-        $streamField = $this->findStreamingField($asset);
+        $streamField = CloudflareVideoStreamField::findStreamingFieldForAsset($asset);
         if (!$streamField) {
             return;
         }
@@ -84,7 +84,7 @@ class Plugin extends \craft\base\Plugin
             return;
         }
 
-        $streamField = $this->findStreamingField($asset);
+        $streamField = CloudflareVideoStreamField::findStreamingFieldForAsset($asset);
         if (!$streamField) {
             return;
         }
@@ -152,7 +152,7 @@ class Plugin extends \craft\base\Plugin
                     return;
                 }
 
-                $streamField = $this->findStreamingField($event->asset);
+                $streamField = CloudflareVideoStreamField::findStreamingFieldForAsset($event->asset);
                 if (!$streamField) {
                     return;
                 }
@@ -174,7 +174,7 @@ class Plugin extends \craft\base\Plugin
                     return;
                 }
 
-                $streamField = $this->findStreamingField($event->asset);
+                $streamField = CloudflareVideoStreamField::findStreamingFieldForAsset($event->asset);
                 if (!$streamField) {
                     return;
                 }
@@ -272,22 +272,5 @@ class Plugin extends \craft\base\Plugin
     private function isNewValidEvent(ModelEvent $event): bool
     {
         return $event->isNew && $event->isValid;
-    }
-
-    private function findStreamingField(Asset $asset): ?CloudflareVideoStreamField
-    {
-        $fields = $asset->getFieldLayout()->getCustomFields();
-
-        /** @var null|CloudflareVideoStreamField $streamField */
-        $streamField = null;
-        foreach ($fields as $field) {
-            if ($field instanceof CloudflareVideoStreamField) {
-                $streamField = $field;
-
-                break;
-            }
-        }
-
-        return $streamField;
     }
 }

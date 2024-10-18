@@ -112,4 +112,21 @@ class CloudflareVideoStreamField extends Field
 
         return $videoType;
     }
+
+    public static function findStreamingFieldForAsset(\craft\elements\Asset $asset): ?CloudflareVideoStreamField
+    {
+        $fields = $asset->getFieldLayout()->getCustomFields();
+
+        /** @var null|CloudflareVideoStreamField $streamField */
+        $streamField = null;
+        foreach ($fields as $field) {
+            if ($field instanceof CloudflareVideoStreamField) {
+                $streamField = $field;
+
+                break;
+            }
+        }
+
+        return $streamField;
+    }
 }
