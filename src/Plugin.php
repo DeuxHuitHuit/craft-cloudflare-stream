@@ -46,6 +46,33 @@ class Plugin extends \craft\base\Plugin
         parent::__construct($id, $parent, $config);
     }
 
+    /**
+     * @param ModelEvent $event
+     * @return void
+     */
+    public function beforeSave(ModelEvent $event)
+    {
+        // If this isn't a new asset, we don't need to do anything
+        if (!$this->isNewValidEvent($event)) {
+            return;
+        }
+
+        /** @var Asset $asset */
+        $asset = $event->sender;
+        $streamField = CloudflareVideoStreamField::findStreamingFieldForAsset($asset);
+        // If the asset doesn't have a Stream field, we don't need to do anything
+        if (!$streamField) {
+            return;
+        }
+
+        // Since this asset has a Stream field, we need to make sure it's a video asset
+        $event->isValid = $this->isVideoAsset($asset);
+    }
+
+    /**
+     * @param ModelEvent $event
+     * @return void
+     */
     public function beforeAutoUpload(ModelEvent $event)
     {
         /** @var Asset $asset */
@@ -187,6 +214,12 @@ class Plugin extends \craft\base\Plugin
                 // Use our custom preview handler
                 $event->previewHandler = new assetpreviews\AssetPreviewHandler($event->asset, $fieldData);
             }
+        );
+
+        Event::on(
+            Asset::class,
+            Element::EVENT_BEFORE_SAVE,
+            [$this, 'beforeSave']
         );
 
         Event::on(
