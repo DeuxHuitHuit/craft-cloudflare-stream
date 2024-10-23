@@ -2,6 +2,16 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 2.2.0 - 2024-10-23
+
+Before this version, it was possible to upload non-video files in assets that have
+a Cloudflare Stream field. Since this creates an error, we opt into preventing it.
+We always recommend to create a dedicated file system and volume for your stream assets.
+
+* ad4edfa373 (feat) Prevent uploads of non-video files
+* 1c994b21b2 (fix) Use field from field layout instead
+* 9023324bbf (fix) Error in translation
+
 ## 2.1.0 - 2024-10-02
 
 * 911f086cdf (feat) Add TUS support (#14)
