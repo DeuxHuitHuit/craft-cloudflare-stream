@@ -18,7 +18,7 @@ class Folder
         $path = '';
 
         // Start with the volume's path
-        if ($fs->path) {
+        if (property_exists($fs, 'path')) {
             $path = App::parseEnv($fs->path);
         }
         // or start with rootPath, if it exists?
