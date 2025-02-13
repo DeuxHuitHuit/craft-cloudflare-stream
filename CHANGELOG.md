@@ -2,6 +2,10 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 2.2.1 - 2025-02-13
+
+* 35857e68dc (fix) Fs::path does not exist for AWS S3 filesystem (#16, thanks @curtishenson)
+
 ## 2.2.0 - 2024-10-23
 
 Before this version, it was possible to upload non-video files in assets that have
