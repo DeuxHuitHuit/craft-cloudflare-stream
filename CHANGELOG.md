@@ -2,6 +2,10 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 2.2.2 - 2025-06-03
+
+* 8aca64d849 (chore) Compat with php 8.4 (#18)
+
 ## 2.2.1 - 2025-02-13
 
 * 35857e68dc (fix) Fs::path does not exist for AWS S3 filesystem (#16, thanks @curtishenson)
