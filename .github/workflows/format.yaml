@@ -15,15 +15,15 @@ jobs:
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
-                php-version: '8.2'
+                php-version: '8.4'
                 coverage: none
                 tools: composer
 
             - name: composer install
-              run: composer install --prefer-dist --no-suggest --no-progress
+              run: composer install --prefer-dist --no-progress
 
             - name: format
-              run: ./vendor/bin/php-cs-fixer fix src --rules=@PhpCsFixer,-yoda_style,-concat_space
+              run: composer run fix-cs
 
             - uses: stefanzweifel/git-auto-commit-action@v4
               with:
