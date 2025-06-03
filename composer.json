@@ -36,6 +36,11 @@
     "handle": "cloudflare-stream",
     "hasCpSettings": true
   },
+  "scripts": {
+    "check-cs": "ecs check --ansi",
+    "fix-cs": "ecs check --ansi --fix",
+    "phpstan": "phpstan --memory-limit=1G"
+  },
   "config": {
     "allow-plugins": {
       "yiisoft/yii2-composer": true,
@@ -43,6 +48,9 @@
     }
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.35"
+    "craftcms/ecs": "dev-main",
+    "craftcms/phpstan": "dev-main",
+    "friendsofphp/php-cs-fixer": "^3.35",
+    "squizlabs/php_codesniffer": "^3.7"
   }
 }
