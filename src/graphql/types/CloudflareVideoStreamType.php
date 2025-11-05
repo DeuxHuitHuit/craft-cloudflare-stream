@@ -74,6 +74,18 @@ class CloudflareVideoStreamType extends ObjectType
                         return strval($value['mp4Url']);
                     },
                 ],
+                'duration' => [
+                    'name' => 'duration',
+                    'type' => Type::string(),
+                    'description' => 'The duration of the video.',
+                    'resolve' => function ($value) {
+                        if (!isset($value['duration'])) {
+                            return null;
+                        }
+
+                        return strval($value['duration']);
+                    },
+                ],
                 'ready' => [
                     'name' => 'ready',
                     'type' => Type::boolean(),
