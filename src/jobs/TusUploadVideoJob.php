@@ -122,6 +122,7 @@ class TusUploadVideoJob extends BaseJob implements RetryableJobInterface
                 'elementId' => $this->elementId,
                 'fieldHandle' => $this->fieldHandle,
                 'videoUid' => $this->videoUid,
+                'jobType' => 'tus',
             ]));
 
             return;

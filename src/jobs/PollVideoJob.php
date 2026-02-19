@@ -12,6 +12,7 @@ class PollVideoJob extends BaseJob
     public $elementId;
     public $fieldHandle;
     public $videoUid;
+    public $jobType;
     public $lastResult;
     public $attempts = 0;
     public $mp4Url;

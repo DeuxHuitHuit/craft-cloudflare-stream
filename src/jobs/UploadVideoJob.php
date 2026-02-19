@@ -99,6 +99,12 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
 
             throw new \Error($result['error'] . ' ' . $result['message']);
         }
+        if (empty($result['uid'])) {
+            $this->setProgress($queue, 0.3, 'ERROR: Missing video uid');
+            \Craft::error('Upload request failed. Missing video uid', __METHOD__);
+
+            throw new \Error('Missing video uid');
+        }
 
         $this->setProgress($queue, 0.4, 'Saving craft element');
         $element->setFieldValue($this->fieldHandle, $result);
@@ -119,6 +125,7 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
                 'elementId' => $this->elementId,
                 'fieldHandle' => $this->fieldHandle,
                 'videoUid' => $result['uid'],
+                'jobType' => $jobType,
             ]);
             \Craft::$app->getQueue()->push($pollingJob);
             $this->setProgress($queue, 0.7, 'Polling job pushed');
