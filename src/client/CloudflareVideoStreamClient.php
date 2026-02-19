@@ -125,17 +125,30 @@ class CloudflareVideoStreamClient
             return [
                 'error' => 'Error creating TUS request',
                 'message' => $uploadRes->getBody()->getContents(),
+                'status' => $uploadRes->getStatusCode(),
             ];
         }
 
         $headers = $uploadRes->getHeaders();
         $location = $headers['Location'][0];
-        $uid = $headers['stream-media-id'][0];
+        // Somehow, Cloudflare is inconsistent with the case of the headers
+        $uid = isset($headers['Stream-Media-Id'][0]) ?
+            $headers['Stream-Media-Id'][0] :
+            ($headers['stream-media-id'][0] ?? null);
 
         if (!$location) {
             return [
                 'error' => 'Error getting TUS location',
                 'message' => $uploadRes->getBody()->getContents(),
+                'headers' => $headers,
+            ];
+        }
+
+        if (!$uid) {
+            return [
+                'error' => 'Error getting TUS uid',
+                'message' => $uploadRes->getBody()->getContents(),
+                'headers' => $headers,
             ];
         }
 
