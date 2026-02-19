@@ -21,12 +21,16 @@ Make sure to also choose your upload mechanism. If your volume does not have pub
 turn on form data upload. This is the recommended value, but not the default since not all
 hosts allows it.
 
-4) Create a video stream Field and add it to your Asset data model.
+4) Create a new File System and a new Volume specific for streams. This is safer and will
+also allow you to turn off public urls as they are not required for streams to work.
 
-5) When editing an asset, you can now opt-in into sending videos in
+5) Create a new video stream Field and add it to your Asset data model.
+
+6) When editing an asset, you can now opt-in into sending videos in
 [Cloudflare Stream](https://www.cloudflare.com/products/cloudflare-stream/).
+You can also enable auto-upload of stream in the settings.
 
-6) If your are using twig, with a field named `stream` you can access the stream data like so:
+7) If your are using twig, with a field named `stream` you can access the stream data like so:
 
 ```twig
 {% set value = asset.stream %}
@@ -43,7 +47,7 @@ hosts allows it.
 </video>
 ```
 
-7) If you are using graphql, there is a type registered to make it easy to request the proper data.
+8) If you are using graphql, there is a type registered to make it easy to request the proper data.
 
 ```graphql
 query MyQuery {
@@ -88,7 +92,7 @@ query MyQuery {
 }
 ```
 
-8) You can also mass re-upload everything via Craft's cli. Please note that this creates _new_ streams videos
+9) You can also mass re-upload everything via Craft's cli. Please note that this creates _new_ streams videos
 and is useful mainly when changing accounts.
 
 ```sh
