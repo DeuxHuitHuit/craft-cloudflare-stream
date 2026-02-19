@@ -2,6 +2,13 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 2.3.0 - 2026-02-19
+
+* 392501547a (feat) Add duration field in GraphQL CloudflareVideoStreamType (#20, thanks @patrick-long)
+* 809dccd7ad (fix) Add a note about a separate FS (#19)
+* 49e9556b5d (fix) Broken case in uid header (#21)
+* 42d2c8999b (fix) Add job type to poll data
+
 ## 2.2.2 - 2025-06-03
 
 * 8aca64d849 (chore) Compat with php 8.4 (#18)
