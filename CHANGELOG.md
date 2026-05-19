@@ -2,6 +2,10 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 1.6.3 - 2026-05-19
+
+* 1441c5d1f1 (fix) Broken case in uid header (#21)
+
 ## 1.6.2 - 2024-10-09
 
 * c1b6e844ff (fix) Use `path` property instead of `rootPath` (backport of #13)
