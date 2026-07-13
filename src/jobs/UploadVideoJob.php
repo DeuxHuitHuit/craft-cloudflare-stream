@@ -3,6 +3,7 @@
 namespace deuxhuithuit\cfstream\jobs;
 
 use craft\elements\Asset;
+use craft\helpers\StringHelper;
 use craft\queue\BaseJob;
 use deuxhuithuit\cfstream\client\CloudflareVideoStreamClient;
 use deuxhuithuit\cfstream\fields\CloudflareVideoStreamField;
@@ -13,6 +14,8 @@ use yii\queue\RetryableJobInterface;
 // TODO: Make cancellable, to cancel the upload if the asset is deleted
 class UploadVideoJob extends BaseJob implements RetryableJobInterface
 {
+    private const PROGRESS_LABEL_MAX_LENGTH = 255;
+
     public $fieldHandle;
     public $elementId;
     public $videoUrl;
@@ -94,7 +97,12 @@ class UploadVideoJob extends BaseJob implements RetryableJobInterface
             throw new \Error('Upload request failed');
         }
         if (!empty($result['error'])) {
-            $this->setProgress($queue, 0.3, 'ERROR: ' . $result['error'] . ': ' . $result['message']);
+            $progressLabel = 'ERROR: ' . $result['error'] . ': ' . $result['message'];
+            $this->setProgress(
+                $queue,
+                0.3,
+                StringHelper::truncate($progressLabel, self::PROGRESS_LABEL_MAX_LENGTH)
+            );
             \Craft::error('Upload request failed.' . $result['error'] . ' ' . $result['message'], __METHOD__);
 
             throw new \Error($result['error'] . ' ' . $result['message']);
