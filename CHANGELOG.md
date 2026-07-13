@@ -2,6 +2,10 @@
 
 We try to maintain a complete change log, based on what is available in git.
 
+## 2.3.1 - 2026-07-13
+
+* 0390dcacb3 (fix) Truncate message from progress
+
 ## 2.3.0 - 2026-02-19
 
 * 392501547a (feat) Add duration field in GraphQL CloudflareVideoStreamType (#20, thanks @patrick-long)
